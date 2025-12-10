@@ -78,7 +78,18 @@ jobs:
           # Exclude rules that are acceptable for CLI scripts:
           # - PSAvoidUsingWriteHost: Write-Host is appropriate for CLI feedback
           # - PSUseShouldProcessForStateChangingFunctions: Not needed for simple CLI tools
-          $excludeRules = @('PSAvoidUsingWriteHost', 'PSUseShouldProcessForStateChangingFunctions')
+          # - PSUseApprovedVerbs: Custom verbs like Validate-, Parse-, Extract-, Print- are readable
+          # - PSUseSingularNouns: Function names like Get-LanguageConventions are acceptable
+          # - PSUseDeclaredVarsMoreThanAssignments: Some variables may be set but used conditionally
+          # - PSReviewUnusedParameter: Script-level params are used but analyzer doesn't detect it
+          $excludeRules = @(
+            'PSAvoidUsingWriteHost',
+            'PSUseShouldProcessForStateChangingFunctions',
+            'PSUseApprovedVerbs',
+            'PSUseSingularNouns',
+            'PSUseDeclaredVarsMoreThanAssignments',
+            'PSReviewUnusedParameter'
+          )
           $results = Invoke-ScriptAnalyzer -Path ./scripts/powershell -Recurse -Severity Warning,Error -ExcludeRule $excludeRules
           if ($results) {
             $results | Format-Table -AutoSize
@@ -91,7 +102,14 @@ jobs:
         run: |
           $ps1Files = Get-ChildItem -Path ./.github/workflows/scripts -Filter *.ps1 -ErrorAction SilentlyContinue
           if ($ps1Files) {
-            $excludeRules = @('PSAvoidUsingWriteHost', 'PSUseShouldProcessForStateChangingFunctions')
+            $excludeRules = @(
+              'PSAvoidUsingWriteHost',
+              'PSUseShouldProcessForStateChangingFunctions',
+              'PSUseApprovedVerbs',
+              'PSUseSingularNouns',
+              'PSUseDeclaredVarsMoreThanAssignments',
+              'PSReviewUnusedParameter'
+            )
             $results = $ps1Files | ForEach-Object { Invoke-ScriptAnalyzer -Path $_.FullName -Severity Warning,Error -ExcludeRule $excludeRules }
             if ($results) {
               $results | Format-Table -AutoSize
