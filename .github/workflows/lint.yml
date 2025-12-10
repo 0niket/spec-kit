@@ -88,7 +88,9 @@ jobs:
             'PSUseApprovedVerbs',
             'PSUseSingularNouns',
             'PSUseDeclaredVarsMoreThanAssignments',
-            'PSReviewUnusedParameter'
+            'PSReviewUnusedParameter',
+            'PSAvoidUsingEmptyCatchBlock',
+            'PSUseBOMForUnicodeEncodedFile'
           )
           $results = Invoke-ScriptAnalyzer -Path ./scripts/powershell -Recurse -Severity Warning,Error -ExcludeRule $excludeRules
           if ($results) {
@@ -108,7 +110,9 @@ jobs:
               'PSUseApprovedVerbs',
               'PSUseSingularNouns',
               'PSUseDeclaredVarsMoreThanAssignments',
-              'PSReviewUnusedParameter'
+              'PSReviewUnusedParameter',
+              'PSAvoidUsingEmptyCatchBlock',
+              'PSUseBOMForUnicodeEncodedFile'
             )
             $results = $ps1Files | ForEach-Object { Invoke-ScriptAnalyzer -Path $_.FullName -Severity Warning,Error -ExcludeRule $excludeRules }
             if ($results) {
