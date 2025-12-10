@@ -44,3 +44,6 @@ env/
 .genreleases/
 *.zip
 sdd-*/
+
+# Claude Code local settings (may contain user-specific config)
+.claude/settings.local.json

@@ -10,8 +10,46 @@ on:
       - '.github/workflows/**'
   workflow_dispatch:
 
+# Ensure lint and test workflows pass before releasing
+# Note: This workflow only runs on main branch pushes, where lint/test
+# should have already passed via PR checks. The 'needs' below provides
+# additional safety by running quality checks inline before release.
+
 jobs:
+  # Run quality checks before release
+  quality-gate:
+    name: Quality Gate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install ruff pytest pytest-cov
+          pip install -e .
+
+      - name: Run ruff
+        run: ruff check src/
+
+      - name: Run pytest
+        run: pytest tests/python/ -v
+
+      - name: Install bats
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bats
+
+      - name: Run bats
+        run: bats tests/bash/
+
   release:
+    needs: quality-gate
     runs-on: ubuntu-latest
     permissions:
       contents: write
