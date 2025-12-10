@@ -31,6 +31,7 @@
 - [📖 Learn More](#-learn-more)
 - [📋 Detailed Process](#-detailed-process)
 - [🔍 Troubleshooting](#-troubleshooting)
+- [🛠️ Development](#️-development)
 - [👥 Maintainers](#-maintainers)
 - [💬 Support](#-support)
 - [🙏 Acknowledgements](#-acknowledgements)
@@ -635,6 +636,68 @@ git config --global credential.helper manager
 echo "Cleaning up..."
 rm gcm-linux_amd64.2.6.1.deb
 ```
+
+## 🛠️ Development
+
+Contributing to Spec Kit? Here's how to set up your development environment and run quality checks.
+
+### Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/github/spec-kit.git
+cd spec-kit
+
+# Install development dependencies
+make install
+```
+
+### Running Checks
+
+Spec Kit enforces code quality through automated linting and testing. All checks must pass before merging.
+
+```bash
+# Run ALL checks (recommended before committing)
+make check
+
+# Run individual checks
+make lint           # All linters
+make lint-python    # Python only (ruff)
+make lint-markdown  # Markdown only (markdownlint-cli2)
+make lint-shell     # Shell scripts only (shellcheck)
+
+make test           # All tests
+make test-python    # Python tests (pytest)
+make test-bash      # Bash tests (bats-core)
+
+# Other useful commands
+make format         # Auto-format Python code
+make clean          # Remove build artifacts
+make ci             # Simulate full CI pipeline locally
+```
+
+### Quality Standards
+
+| Tool | Purpose | Config |
+|------|---------|--------|
+| `ruff` | Python linting & formatting | `pyproject.toml` |
+| `pytest` | Python unit tests | `tests/python/` |
+| `markdownlint-cli2` | Markdown linting | `.markdownlint-cli2.jsonc` |
+| `shellcheck` | Bash script linting | CI workflow |
+| `bats-core` | Bash script testing | `tests/bash/` |
+| `PSScriptAnalyzer` | PowerShell linting | CI workflow |
+
+### CI/CD
+
+All pull requests must pass:
+
+- **Lint workflow** (`lint.yml`): Markdown, Python, Bash, PowerShell linting
+- **Test workflow** (`test.yml`): Python tests (3.11-3.13), Bash tests
+- **Quality gate**: Release workflow blocks on lint/test failures
+
+See [`.specify/memory/constitution.md`](.specify/memory/constitution.md) for the full project constitution and quality principles.
+
+---
 
 ## 👥 Maintainers
 

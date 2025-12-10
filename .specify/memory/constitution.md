@@ -1,15 +1,17 @@
 <!--
 Sync Impact Report
 ==================
-Version change: 1.0.0 → 1.1.0 (MINOR - added strict enforcement rules)
+Version change: 1.1.0 → 1.2.0 (MINOR - added documentation maintenance principle)
 Modified principles:
-  - III. CI/CD Enforcement: Added strict commit blocking rules
+  - III. CI/CD Enforcement: Added strict commit blocking rules (v1.1.0)
+  - VI. Documentation Maintenance: NEW - requires README sync with code changes
 Added sections:
-  - Strict Enforcement Policy (new subsection under Governance)
+  - Strict Enforcement Policy (v1.1.0)
+  - Principle VI: Documentation Maintenance (v1.2.0)
 Removed sections: N/A
 Templates requiring updates:
   - All templates remain compatible
-Follow-up TODOs: None - infrastructure is now implemented
+Follow-up TODOs: None
 -->
 
 # Spec Kit Constitution
@@ -104,6 +106,20 @@ Bash and PowerShell implementations MUST have equivalent functionality and testi
 - New scripts MUST be implemented in both languages before merge
 
 **Rationale**: Spec Kit supports Windows and Unix. Feature gaps between platforms frustrate users and create support burden.
+
+### VI. Documentation Maintenance
+
+Documentation MUST be kept in sync with code changes. Outdated documentation is worse than no documentation.
+
+**Requirements**:
+
+- README.md MUST be updated when adding new features, tools, or workflows
+- Changes to CLI commands, options, or behavior MUST be reflected in documentation
+- New development tools or processes MUST be documented in the Development section
+- Constitution changes MUST be reflected in any README references to it
+- PR descriptions SHOULD note documentation updates made
+
+**Rationale**: Users and contributors rely on documentation to understand the project. Stale documentation leads to confusion, support burden, and contributor friction.
 
 ## Quality Infrastructure
 
@@ -220,4 +236,4 @@ This constitution supersedes informal practices and ad-hoc decisions. All contri
 - There are NO exceptions to CI enforcement
 - Manual overrides of branch protection are prohibited
 
-**Version**: 1.1.0 | **Ratified**: 2025-12-05 | **Last Amended**: 2025-12-10
+**Version**: 1.2.0 | **Ratified**: 2025-12-05 | **Last Amended**: 2025-12-10
