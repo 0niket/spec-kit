@@ -75,7 +75,11 @@ jobs:
       - name: Run PSScriptAnalyzer on scripts/powershell
         shell: pwsh
         run: |
-          $results = Invoke-ScriptAnalyzer -Path ./scripts/powershell -Recurse -Severity Warning,Error
+          # Exclude rules that are acceptable for CLI scripts:
+          # - PSAvoidUsingWriteHost: Write-Host is appropriate for CLI feedback
+          # - PSUseShouldProcessForStateChangingFunctions: Not needed for simple CLI tools
+          $excludeRules = @('PSAvoidUsingWriteHost', 'PSUseShouldProcessForStateChangingFunctions')
+          $results = Invoke-ScriptAnalyzer -Path ./scripts/powershell -Recurse -Severity Warning,Error -ExcludeRule $excludeRules
           if ($results) {
             $results | Format-Table -AutoSize
             exit 1
@@ -87,7 +91,8 @@ jobs:
         run: |
           $ps1Files = Get-ChildItem -Path ./.github/workflows/scripts -Filter *.ps1 -ErrorAction SilentlyContinue
           if ($ps1Files) {
-            $results = $ps1Files | ForEach-Object { Invoke-ScriptAnalyzer -Path $_.FullName -Severity Warning,Error }
+            $excludeRules = @('PSAvoidUsingWriteHost', 'PSUseShouldProcessForStateChangingFunctions')
+            $results = $ps1Files | ForEach-Object { Invoke-ScriptAnalyzer -Path $_.FullName -Severity Warning,Error -ExcludeRule $excludeRules }
             if ($results) {
               $results | Format-Table -AutoSize
               exit 1

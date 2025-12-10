@@ -10,6 +10,7 @@ if [[ $# -ne 2 ]]; then
   exit 1
 fi
 
+# shellcheck disable=SC2034 # NEW_VERSION exported for use in release_notes.md template
 NEW_VERSION="$1"
 LAST_TAG="$2"
 
