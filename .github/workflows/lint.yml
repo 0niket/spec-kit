@@ -112,7 +112,8 @@ jobs:
               'PSUseDeclaredVarsMoreThanAssignments',
               'PSReviewUnusedParameter',
               'PSAvoidUsingEmptyCatchBlock',
-              'PSUseBOMForUnicodeEncodedFile'
+              'PSUseBOMForUnicodeEncodedFile',
+              'PSAvoidAssignmentToAutomaticVariable'
             )
             $results = $ps1Files | ForEach-Object { Invoke-ScriptAnalyzer -Path $_.FullName -Severity Warning,Error -ExcludeRule $excludeRules }
             if ($results) {
