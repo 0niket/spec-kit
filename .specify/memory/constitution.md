@@ -144,6 +144,7 @@ GitHub Actions workflows:
 ### Before Submitting a PR
 
 1. Run linters locally:
+
    ```bash
    ruff check src/
    ruff format --check src/
@@ -151,6 +152,7 @@ GitHub Actions workflows:
    ```
 
 2. Run tests locally:
+
    ```bash
    pytest tests/python/ -v
    bats tests/bash/

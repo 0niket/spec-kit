@@ -19,9 +19,12 @@
     },
     "MD050": {
       "style": "asterisk"
-    }
+    },
+    "MD060": false
   },
   "ignores": [
-    ".genreleases/"
+    ".genreleases/",
+    ".pytest_cache/",
+    "node_modules/"
   ]
 }
