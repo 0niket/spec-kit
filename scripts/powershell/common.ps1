@@ -72,19 +72,34 @@ function Test-FeatureBranch {
         [string]$Branch,
         [bool]$HasGit = $true
     )
-    
+
     # For non-git repos, we can't enforce branch naming but still provide output
     if (-not $HasGit) {
         Write-Warning "[specify] Warning: Git repository not detected; skipped branch validation"
         return $true
     }
-    
-    if ($Branch -notmatch '^[0-9]{3}-') {
-        Write-Output "ERROR: Not on a feature branch. Current branch: $Branch"
-        Write-Output "Feature branches should be named like: 001-feature-name"
+
+    # Skip validation for main/master branches (user needs to set SPECIFY_FEATURE)
+    if ($Branch -eq "main" -or $Branch -eq "master") {
+        Write-Output "ERROR: On $Branch branch. Set SPECIFY_FEATURE env var or switch to a feature branch."
+        Write-Output "Example: `$env:SPECIFY_FEATURE = '001-my-feature'"
         return $false
     }
-    return $true
+
+    # Accept multiple branch naming conventions:
+    # 1. Spec Kit style: 001-feature-name (3 digits + hyphen)
+    # 2. ClickUp style: abc123xy-feature-name (alphanumeric ticket ID + hyphen)
+    # 3. Jira style: PROJECT-123-feature-name
+    # 4. Any branch with a hyphen (generic feature branch)
+    if ($Branch -match '-') {
+        # Branch has a hyphen - accept it as a feature branch
+        return $true
+    }
+
+    Write-Output "ERROR: Not on a feature branch. Current branch: $Branch"
+    Write-Output "Feature branches should contain a hyphen (e.g., 001-feature-name, ticket-id-feature)"
+    Write-Output "Or set SPECIFY_FEATURE env var: `$env:SPECIFY_FEATURE = 'your-feature-name'"
+    return $false
 }
 
 function Get-FeatureDir {

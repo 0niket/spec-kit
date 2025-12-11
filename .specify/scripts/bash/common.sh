@@ -75,32 +75,55 @@ check_feature_branch() {
         return 0
     fi
 
-    if [[ ! "$branch" =~ ^[0-9]{3}- ]]; then
-        echo "ERROR: Not on a feature branch. Current branch: $branch" >&2
-        echo "Feature branches should be named like: 001-feature-name" >&2
+    # Skip validation for main/master branches (user needs to set SPECIFY_FEATURE)
+    if [[ "$branch" == "main" || "$branch" == "master" ]]; then
+        echo "ERROR: On $branch branch. Set SPECIFY_FEATURE env var or switch to a feature branch." >&2
+        echo "Example: export SPECIFY_FEATURE=001-my-feature" >&2
         return 1
     fi
 
-    return 0
+    # Accept multiple branch naming conventions:
+    # 1. Spec Kit style: 001-feature-name (3 digits + hyphen)
+    # 2. ClickUp style: abc123xy-feature-name (alphanumeric ticket ID + hyphen)
+    # 3. Jira style: PROJECT-123-feature-name
+    # 4. Any branch with a hyphen (generic feature branch)
+    if [[ "$branch" =~ - ]]; then
+        # Branch has a hyphen - accept it as a feature branch
+        return 0
+    fi
+
+    echo "ERROR: Not on a feature branch. Current branch: $branch" >&2
+    echo "Feature branches should contain a hyphen (e.g., 001-feature-name, ticket-id-feature)" >&2
+    echo "Or set SPECIFY_FEATURE env var: export SPECIFY_FEATURE=your-feature-name" >&2
+    return 1
 }
 
 get_feature_dir() { echo "$1/specs/$2"; }
 
-# Find feature directory by numeric prefix instead of exact branch match
-# This allows multiple branches to work on the same spec (e.g., 004-fix-bug, 004-add-feature)
+# Find feature directory by prefix instead of exact branch match
+# Supports multiple branch naming conventions:
+# - Spec Kit style: 001-feature-name (numeric prefix)
+# - ClickUp style: abc123xy-feature-name (alphanumeric prefix)
+# - Jira style: PROJECT-123-feature-name
 find_feature_dir_by_prefix() {
     local repo_root="$1"
     local branch_name="$2"
     local specs_dir="$repo_root/specs"
 
-    # Extract numeric prefix from branch (e.g., "004" from "004-whatever")
-    if [[ ! "$branch_name" =~ ^([0-9]{3})- ]]; then
-        # If branch doesn't have numeric prefix, fall back to exact match
+    # Extract prefix from branch (everything before second hyphen, or first segment)
+    local prefix=""
+
+    # Try numeric prefix first (e.g., "004" from "004-whatever")
+    if [[ "$branch_name" =~ ^([0-9]{3})- ]]; then
+        prefix="${BASH_REMATCH[1]}"
+    # Try alphanumeric prefix (e.g., "abc123xy" from "abc123xy-feature-name")
+    elif [[ "$branch_name" =~ ^([a-zA-Z0-9]+)- ]]; then
+        prefix="${BASH_REMATCH[1]}"
+    else
+        # No recognizable prefix, use exact match
         echo "$specs_dir/$branch_name"
         return
     fi
-
-    local prefix="${BASH_REMATCH[1]}"
 
     # Search for directories in specs/ that start with this prefix
     local matches=()
@@ -122,7 +145,7 @@ find_feature_dir_by_prefix() {
     else
         # Multiple matches - this shouldn't happen with proper naming convention
         echo "ERROR: Multiple spec directories found with prefix '$prefix': ${matches[*]}" >&2
-        echo "Please ensure only one spec directory exists per numeric prefix." >&2
+        echo "Please ensure only one spec directory exists per prefix." >&2
         echo "$specs_dir/$branch_name"  # Return something to avoid breaking the script
     fi
 }
