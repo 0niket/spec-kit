@@ -12,7 +12,24 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Outline
 
-1. Run `.specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks` from repo root and parse FEATURE_DIR and AVAILABLE_DOCS list. All paths must be absolute. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
+1. Run `.specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks --include-commits --include-milestones` from repo root and parse FEATURE_DIR and AVAILABLE_DOCS list. All paths must be absolute. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
+
+   **Document Loading Behavior**:
+   - **Required**: tasks.md (always required)
+   - **Optional but Recommended**: commits.md (for commit-by-commit execution)
+   - **Optional but Recommended**: milestones.md (for milestone pause and verification)
+
+   **If commits.md exists**:
+   - Execute tasks grouped by commit boundaries (not flat list)
+   - Create git commits at each commit boundary with planned messages
+
+   **If milestones.md exists**:
+   - Pause at milestone boundaries for manual verification
+   - Track verification status (pending → verification_required → verified/rejected)
+
+   **If neither exists**:
+   - Fall back to legacy flat task execution (phase-by-phase)
+   - Show warning: "For better execution control, run /speckit.commits and /speckit.milestones first"
 
 2. **Check checklists status** (if FEATURE_DIR/checklists/ exists):
    - Scan all checklist files in the checklists/ directory
@@ -103,21 +120,130 @@ You **MUST** consider the user input before proceeding (if not empty).
    - **Task details**: ID, description, file paths, parallel markers [P]
    - **Execution flow**: Order and dependency requirements
 
-6. Execute implementation following the task plan:
+6. **Commit-by-Commit Execution** (if commits.md exists):
+
+   **Execution Flow**:
+
+   ```text
+   For each commit in commits.md (in order):
+     1. Display commit info: ID, message, tasks count
+     2. Execute all Non-Repetitive Tasks in commit
+     3. Execute all Repetitive Tasks in commit (TDD-RED, TDD-GREEN, LINT, VERIFY)
+     4. If all tasks pass:
+        - Create git commit with planned message from commits.md
+        - Update commit status to 'completed' in commits.md
+        - Check if this commit completes a milestone
+     5. If any task fails:
+        - STOP execution
+        - Report failure with context
+        - Do NOT create partial commits
+   ```
+
+   **Git Commit Creation**:
+
+   - Use the exact conventional commit message from commits.md
+   - Stage only files modified during this commit's tasks
+   - Include commit ID in commit body for traceability
+   - Example: `git commit -m "feat(commits): add task grouping algorithm" -m "Commit: C002"`
+
+   **Milestone Pause and Verification** (if milestones.md exists):
+
+   ```text
+   When all commits in a milestone are completed:
+     1. Update milestone status from 'pending' to 'verification_required'
+     2. Display milestone verification criteria
+     3. PAUSE execution and prompt user:
+        "Milestone [M###] reached: [Title]
+         Please verify the following criteria:
+         - [ ] [V001] Given... When... Then...
+         - [ ] [V002] Given... When... Then...
+
+         Enter 'verify' to continue or 'reject' to rollback"
+     4. Wait for user input:
+        - If 'verify': Update status to 'verified', continue to next milestone
+        - If 'reject': Update status to 'rejected', halt execution
+   ```
+
+   **Verification Status Tracking**:
+
+   - Update milestones.md with status changes in real-time
+   - Record verification timestamp in 'Verified At' field
+   - Record verifier in 'Verified By' field (e.g., "user" or "automated")
+
+   **Progress Visualization**:
+
+   Display progress after each commit and at milestone boundaries:
+
+   ```text
+   ══════════════════════════════════════════════════════════════════
+   WORKFLOW PROGRESS
+   ══════════════════════════════════════════════════════════════════
+
+   Milestone 1: Group Tasks into Commits [US1] ✓ VERIFIED
+   ├── [C001] feat(templates): add commits and milestones templates ✓
+   ├── [C002] feat(constitution): add constitution parser ✓
+   └── [C003] feat(commits): add speckit.commits command ✓
+
+   Milestone 2: Add Repetitive Tasks [US2] → IN PROGRESS
+   ├── [C004] feat(commits): add repetitive task injection ✓
+   └── [C005] test(commits): add integration tests ◯ (current)
+
+   Milestone 3: Define Milestones [US3] ○ PENDING
+   ├── [C006] feat(milestones): add speckit.milestones command
+   └── [C007] test(milestones): add verification tests
+
+   ══════════════════════════════════════════════════════════════════
+   Progress: 4/7 commits (57%) | 1/3 milestones verified
+   Current: [C005] test(commits): add integration tests
+   Next milestone: "Add Repetitive Tasks" - 1 commit remaining
+   ══════════════════════════════════════════════════════════════════
+   ```
+
+   **Status Symbols**:
+
+   - ✓ = completed/verified
+   - ○ = pending (not started)
+   - ◯ = current (in progress)
+   - ✗ = failed/rejected
+
+   **Milestone Verification Status Display**:
+
+   ```text
+   ══════════════════════════════════════════════════════════════════
+   MILESTONE VERIFICATION: Add Repetitive Tasks [US2]
+   ══════════════════════════════════════════════════════════════════
+
+   Status: VERIFICATION REQUIRED
+
+   Please verify the following criteria:
+   [ ] [V005] Given a constitution requiring TDD, When commits are
+       generated, Then each includes RED-GREEN-REFACTOR tasks
+   [ ] [V006] Given a constitution requiring linting, When commits
+       are generated, Then each includes "run linter" task
+
+   ══════════════════════════════════════════════════════════════════
+   Commands: 'verify' to continue | 'reject' to halt | 'notes' to add
+   ══════════════════════════════════════════════════════════════════
+   ```
+
+7. Execute implementation following the task plan (legacy mode if no commits.md):
+
    - **Phase-by-phase execution**: Complete each phase before moving to the next
-   - **Respect dependencies**: Run sequential tasks in order, parallel tasks [P] can run together  
+   - **Respect dependencies**: Run sequential tasks in order, parallel tasks [P] can run together
    - **Follow TDD approach**: Execute test tasks before their corresponding implementation tasks
    - **File-based coordination**: Tasks affecting the same files must run sequentially
    - **Validation checkpoints**: Verify each phase completion before proceeding
 
-7. Implementation execution rules:
+8. Implementation execution rules:
+
    - **Setup first**: Initialize project structure, dependencies, configuration
    - **Tests before code**: If you need to write tests for contracts, entities, and integration scenarios
    - **Core development**: Implement models, services, CLI commands, endpoints
    - **Integration work**: Database connections, middleware, logging, external services
    - **Polish and validation**: Unit tests, performance optimization, documentation
 
-8. Progress tracking and error handling:
+9. Progress tracking and error handling:
+
    - Report progress after each completed task
    - Halt execution if any non-parallel task fails
    - For parallel tasks [P], continue with successful tasks, report failed ones
@@ -125,11 +251,32 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Suggest next steps if implementation cannot proceed
    - **IMPORTANT** For completed tasks, make sure to mark the task off as [X] in the tasks file.
 
-9. Completion validation:
-   - Verify all required tasks are completed
-   - Check that implemented features match the original specification
-   - Validate that tests pass and coverage meets requirements
-   - Confirm the implementation follows the technical plan
-   - Report final status with summary of completed work
+10. Completion validation:
 
-Note: This command assumes a complete task breakdown exists in tasks.md. If tasks are incomplete or missing, suggest running `/speckit.tasks` first to regenerate the task list.
+    - Verify all required tasks are completed
+    - Check that implemented features match the original specification
+    - Validate that tests pass and coverage meets requirements
+    - Confirm the implementation follows the technical plan
+    - Report final status with summary of completed work
+
+## Error Handling
+
+**Missing Required Files**:
+
+- If tasks.md is missing: STOP with error "tasks.md not found. Run /speckit.tasks first."
+
+**Missing Optional Files** (with clear guidance):
+
+- If commits.md is missing but milestones.md exists: WARN "commits.md not found. Run /speckit.commits first for commit boundaries."
+- If milestones.md is missing but commits.md exists: WARN "milestones.md not found. Run /speckit.milestones for verification checkpoints."
+- If both are missing: WARN "For structured execution with commit boundaries and verification checkpoints, run /speckit.commits then /speckit.milestones."
+
+**Verification Rejection**:
+
+- If user rejects a milestone verification:
+  1. Record rejection in milestones.md (status: rejected)
+  2. Display which verification criteria failed
+  3. Suggest: "Fix the issues and re-run /speckit.implement to resume from this milestone"
+  4. Do NOT rollback commits already created (they represent completed work)
+
+Note: This command supports both legacy flat execution (tasks.md only) and structured commit-by-commit execution (with commits.md and milestones.md). For best results, run the full workflow: `/speckit.tasks` → `/speckit.commits` → `/speckit.milestones` → `/speckit.implement`.

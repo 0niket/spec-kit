@@ -1,13 +1,12 @@
 <!--
 Sync Impact Report
 ==================
-Version change: 1.1.0 → 1.2.0 (MINOR - added documentation maintenance principle)
+Version change: 1.2.0 → 1.3.0 (MINOR - added TDD principle and commit authorship rule)
 Modified principles:
-  - III. CI/CD Enforcement: Added strict commit blocking rules (v1.1.0)
-  - VI. Documentation Maintenance: NEW - requires README sync with code changes
+  - III. CI/CD Enforcement: Enhanced with `make check` requirement before commits
 Added sections:
-  - Strict Enforcement Policy (v1.1.0)
-  - Principle VI: Documentation Maintenance (v1.2.0)
+  - Principle VII: Test-Driven Development (TDD)
+  - Commit Authorship Policy (no AI co-authors)
 Removed sections: N/A
 Templates requiring updates:
   - All templates remain compatible
@@ -70,6 +69,7 @@ Quality gates MUST be enforced automatically in CI pipelines. **No commit shall 
 - Branch protection MUST require passing CI checks
 - Failed checks MUST block merge with NO exceptions
 - Release workflow (`release.yml`) includes quality gate that MUST pass before any release
+- **`make check` MUST pass locally before any commit is created**
 
 **Implemented Workflows**:
 
@@ -121,6 +121,37 @@ Documentation MUST be kept in sync with code changes. Outdated documentation is 
 
 **Rationale**: Users and contributors rely on documentation to understand the project. Stale documentation leads to confusion, support burden, and contributor friction.
 
+### VII. Test-Driven Development (TDD)
+
+All new code MUST follow the **Red-Green-Refactor** workflow. Tests come first, implementation second.
+
+**Requirements**:
+
+- **RED**: Write a failing test BEFORE writing implementation code
+- **GREEN**: Write the minimum code necessary to make the test pass
+- **REFACTOR**: Clean up the code while keeping all tests green
+- `make check` MUST pass before any commit is created
+
+**TDD Workflow by Language**:
+
+| Language | Test Framework | Test Location | Run Command |
+|----------|---------------|---------------|-------------|
+| Python | pytest | `tests/python/` | `pytest tests/python/ -v` |
+| Bash | bats-core | `tests/bash/` | `bats tests/bash/` |
+| PowerShell | Pester | `tests/powershell/` | `Invoke-Pester` |
+
+**Practical TDD Cycle**:
+
+1. **Write failing test**: Add test to appropriate `tests/` directory
+2. **Run test, see it fail**: `make test` (confirms RED state)
+3. **Implement feature**: Write code in `src/` or `scripts/`
+4. **Run test, see it pass**: `make test` (confirms GREEN state)
+5. **Refactor if needed**: Clean up while tests stay green
+6. **Final verification**: `make check` (lint + test)
+7. **Commit**: Only after `make check` passes
+
+**Rationale**: TDD ensures every piece of code has test coverage from the start, prevents regression, and produces cleaner, more modular code. Writing tests first forces clear thinking about requirements before implementation.
+
 ## Quality Infrastructure
 
 This section defines the tooling that enforces the Core Principles.
@@ -159,19 +190,11 @@ GitHub Actions workflows:
 
 ### Before Submitting a PR
 
-1. Run linters locally:
+1. Follow TDD: Write tests first, then implementation
+2. Run all checks locally:
 
    ```bash
-   ruff check src/
-   ruff format --check src/
-   shellcheck scripts/bash/*.sh
-   ```
-
-2. Run tests locally:
-
-   ```bash
-   pytest tests/python/ -v
-   bats tests/bash/
+   make check
    ```
 
 3. Verify both bash and PowerShell scripts if modifying either
@@ -182,7 +205,8 @@ GitHub Actions workflows:
 Reviewers MUST verify:
 
 - [ ] All CI checks pass (lint + test) - **MANDATORY, NO EXCEPTIONS**
-- [ ] New code has corresponding tests
+- [ ] New code has corresponding tests (TDD followed)
+- [ ] Tests were written before implementation (verify commit history)
 - [ ] Cross-platform parity maintained (if applicable)
 - [ ] No hardcoded paths or platform-specific assumptions without guards
 - [ ] Error messages are clear and actionable
@@ -192,13 +216,27 @@ Reviewers MUST verify:
 - Commits MUST be atomic (one logical change per commit)
 - Commit messages MUST follow conventional format: `type: description`
 - Types: `feat`, `fix`, `docs`, `test`, `refactor`, `ci`, `chore`
+- **`make check` MUST pass before any commit is created**
 - Commits MUST NOT be created if linting or tests fail locally
+
+### Commit Authorship Policy
+
+- **AI assistants (Claude, Copilot, etc.) MUST NOT be added as co-authors on commits**
+- All commits MUST be attributed solely to the human author
+- Do not include `Co-Authored-By` lines for AI tools
+
+**Rationale**: Commits represent human accountability for code changes. AI assistants are tools, not authors.
 
 ## Governance
 
 This constitution supersedes informal practices and ad-hoc decisions. All contributors MUST adhere to these principles.
 
 ### Strict Enforcement Policy
+
+**NO COMMIT SHALL BE CREATED WITHOUT:**
+
+1. `make check` passing locally (lint + test)
+2. TDD workflow followed (test written before implementation)
 
 **NO COMMIT SHALL BE MERGED WITHOUT:**
 
@@ -236,4 +274,4 @@ This constitution supersedes informal practices and ad-hoc decisions. All contri
 - There are NO exceptions to CI enforcement
 - Manual overrides of branch protection are prohibited
 
-**Version**: 1.2.0 | **Ratified**: 2025-12-05 | **Last Amended**: 2025-12-10
+**Version**: 1.3.0 | **Ratified**: 2025-12-05 | **Last Amended**: 2025-12-11

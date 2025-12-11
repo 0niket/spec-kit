@@ -11,6 +11,10 @@
 #   -Json               Output in JSON format
 #   -RequireTasks       Require tasks.md to exist (for implementation phase)
 #   -IncludeTasks       Include tasks.md in AVAILABLE_DOCS list
+#   -RequireCommits     Require commits.md to exist (for implementation phase)
+#   -IncludeCommits     Include commits.md in AVAILABLE_DOCS list
+#   -RequireMilestones  Require milestones.md to exist (for implementation phase)
+#   -IncludeMilestones  Include milestones.md in AVAILABLE_DOCS list
 #   -PathsOnly          Only output path variables (no validation)
 #   -Help, -h           Show help message
 
@@ -19,6 +23,10 @@ param(
     [switch]$Json,
     [switch]$RequireTasks,
     [switch]$IncludeTasks,
+    [switch]$RequireCommits,
+    [switch]$IncludeCommits,
+    [switch]$RequireMilestones,
+    [switch]$IncludeMilestones,
     [switch]$PathsOnly,
     [switch]$Help
 )
@@ -36,16 +44,23 @@ OPTIONS:
   -Json               Output in JSON format
   -RequireTasks       Require tasks.md to exist (for implementation phase)
   -IncludeTasks       Include tasks.md in AVAILABLE_DOCS list
+  -RequireCommits     Require commits.md to exist (for commit-aware execution)
+  -IncludeCommits     Include commits.md in AVAILABLE_DOCS list
+  -RequireMilestones  Require milestones.md to exist (for milestone-aware execution)
+  -IncludeMilestones  Include milestones.md in AVAILABLE_DOCS list
   -PathsOnly          Only output path variables (no prerequisite validation)
   -Help, -h           Show this help message
 
 EXAMPLES:
   # Check task prerequisites (plan.md required)
   .\check-prerequisites.ps1 -Json
-  
+
   # Check implementation prerequisites (plan.md + tasks.md required)
   .\check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks
-  
+
+  # Check full implementation prerequisites (tasks + commits + milestones)
+  .\check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks -IncludeCommits -IncludeMilestones
+
   # Get feature paths only (no validation)
   .\check-prerequisites.ps1 -PathsOnly
 
@@ -105,6 +120,20 @@ if ($RequireTasks -and -not (Test-Path $paths.TASKS -PathType Leaf)) {
     exit 1
 }
 
+# Check for commits.md if required
+if ($RequireCommits -and -not (Test-Path $paths.COMMITS -PathType Leaf)) {
+    Write-Output "ERROR: commits.md not found in $($paths.FEATURE_DIR)"
+    Write-Output "Run /speckit.commits first to create the commit groupings."
+    exit 1
+}
+
+# Check for milestones.md if required
+if ($RequireMilestones -and -not (Test-Path $paths.MILESTONES -PathType Leaf)) {
+    Write-Output "ERROR: milestones.md not found in $($paths.FEATURE_DIR)"
+    Write-Output "Run /speckit.milestones first to create the milestone checkpoints."
+    exit 1
+}
+
 # Build list of available documents
 $docs = @()
 
@@ -120,8 +149,18 @@ if ((Test-Path $paths.CONTRACTS_DIR) -and (Get-ChildItem -Path $paths.CONTRACTS_
 if (Test-Path $paths.QUICKSTART) { $docs += 'quickstart.md' }
 
 # Include tasks.md if requested and it exists
-if ($IncludeTasks -and (Test-Path $paths.TASKS)) { 
-    $docs += 'tasks.md' 
+if ($IncludeTasks -and (Test-Path $paths.TASKS)) {
+    $docs += 'tasks.md'
+}
+
+# Include commits.md if requested and it exists
+if ($IncludeCommits -and (Test-Path $paths.COMMITS)) {
+    $docs += 'commits.md'
+}
+
+# Include milestones.md if requested and it exists
+if ($IncludeMilestones -and (Test-Path $paths.MILESTONES)) {
+    $docs += 'milestones.md'
 }
 
 # Output results
@@ -144,5 +183,11 @@ if ($Json) {
     
     if ($IncludeTasks) {
         Test-FileExists -Path $paths.TASKS -Description 'tasks.md' | Out-Null
+    }
+    if ($IncludeCommits) {
+        Test-FileExists -Path $paths.COMMITS -Description 'commits.md' | Out-Null
+    }
+    if ($IncludeMilestones) {
+        Test-FileExists -Path $paths.MILESTONES -Description 'milestones.md' | Out-Null
     }
 }

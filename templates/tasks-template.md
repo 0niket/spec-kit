@@ -249,3 +249,13 @@ With multiple developers:
 - Commit after each task or logical group
 - Stop at any checkpoint to validate story independently
 - Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
+
+---
+
+## Next Steps
+
+After generating `tasks.md`, run the following commands to complete the diverge-converge workflow:
+
+1. **`/speckit.commits`** - Group tasks into logical commits with constitution-driven repetitive tasks (TDD, linting)
+2. **`/speckit.milestones`** - Create verification checkpoints with acceptance criteria from spec.md
+3. **`/speckit.implement`** - Execute with commit boundaries and milestone pause points

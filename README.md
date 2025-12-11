@@ -18,16 +18,38 @@
 
 > **🔀 Why This Fork?**
 >
-> This is a fork of the original [Spec Kit](https://github.com/github/spec-kit) with enhancements to bridge the gap between planning and execution.
+> This is a fork of the original [Spec Kit](https://github.com/github/spec-kit) that introduces a **Diverge-Converge** workflow model.
 >
-> The original Spec Kit has three planning layers: **Specification → Planning → Tasks**. However, there's a missing link between planning and tasks. This fork introduces the concept of **Commits** as the bridge:
+> **The Problem**: The original Spec Kit only diverges (breaks down work) but never converges:
 >
-> - **Commits are planned ahead of time** — Tasks achieve commits, not the other way around
-> - **Two types of tasks**:
->   - **Repetitive tasks** — Driven by your constitution (e.g., TDD's RED-GREEN-REFACTOR cycle for each commit, Playwright tests updated with UI changes)
->   - **Non-repetitive tasks** — The actual work required to implement the specification
+> | Phase | Constitution Used? | Gap |
+> | ----- | ------------------ | --- |
+> | `/speckit.plan` | ✅ Gates workflow | Works well |
+> | `/speckit.analyze` | ✅ Validates compliance | Works well |
+> | `/speckit.tasks` | ❌ Not loaded | Tasks don't reflect constitution |
+> | `/speckit.implement` | ❌ Not loaded | No verification checkpoints |
 >
-> This approach ensures that quality practices defined in your constitution are automatically woven into every commit, not bolted on as an afterthought.
+> **The Solution**: A complete **Diverge-Converge** workflow:
+>
+> ```text
+> DIVERGENT (Breaking Down)              CONVERGENT (Building Up)
+> ┌─────────────────────────┐           ┌─────────────────────────┐
+> │  /speckit.specify       │           │  /speckit.commits       │
+> │       ↓                 │           │  (tasks → commits)      │
+> │  /speckit.plan          │    ───►   │       ↓                 │
+> │       ↓                 │           │  /speckit.milestones    │
+> │  /speckit.tasks         │           │  (commits → milestones) │
+> └─────────────────────────┘           └─────────────────────────┘
+> ```
+>
+> **Key Concepts**:
+>
+> - **Commits** accumulate tasks (each commit includes repetitive + non-repetitive tasks)
+> - **Repetitive tasks** — Derived from constitution (TDD, linting, Playwright tests)
+> - **Non-repetitive tasks** — The actual implementation work
+> - **Milestones** — Verification checkpoints requiring manual human review
+>
+> This ensures quality practices are woven into every commit, with clear checkpoints for human verification.
 
 ---
 
@@ -265,13 +287,15 @@ After running `specify init`, your AI coding agent will have access to these sla
 
 Essential commands for the Spec-Driven Development workflow:
 
-| Command                 | Description                                                              |
-| ----------------------- | ------------------------------------------------------------------------ |
-| `/speckit.constitution` | Create or update project governing principles and development guidelines |
-| `/speckit.specify`      | Define what you want to build (requirements and user stories)            |
-| `/speckit.plan`         | Create technical implementation plans with your chosen tech stack        |
-| `/speckit.tasks`        | Generate actionable task lists for implementation                        |
-| `/speckit.implement`    | Execute all tasks to build the feature according to the plan             |
+| Command                 | Description                                                                                   |
+| ----------------------- | --------------------------------------------------------------------------------------------- |
+| `/speckit.constitution` | Create or update project governing principles and development guidelines                      |
+| `/speckit.specify`      | Define what you want to build (requirements and user stories)                                 |
+| `/speckit.plan`         | Create technical implementation plans with your chosen tech stack                             |
+| `/speckit.tasks`        | Generate actionable task lists for implementation                                             |
+| `/speckit.commits`      | Group tasks into logical commits with constitution-driven repetitive tasks (TDD, linting)     |
+| `/speckit.milestones`   | Group commits into milestones with verification criteria for human review checkpoints         |
+| `/speckit.implement`    | Execute all tasks to build the feature, respecting commit and milestone boundaries            |
 
 #### Optional Commands
 
@@ -408,7 +432,7 @@ Go to the project folder and run your AI agent. In our example, we're using `cla
 
 ![Bootstrapping Claude Code environment](./media/bootstrap-claude-code.gif)
 
-You will know that things are configured correctly if you see the `/speckit.constitution`, `/speckit.specify`, `/speckit.plan`, `/speckit.tasks`, and `/speckit.implement` commands available.
+You will know that things are configured correctly if you see the `/speckit.constitution`, `/speckit.specify`, `/speckit.plan`, `/speckit.tasks`, `/speckit.commits`, `/speckit.milestones`, and `/speckit.implement` commands available.
 
 The first step should be establishing your project's governing principles using the `/speckit.constitution` command. This helps ensure consistent decision-making throughout all subsequent development phases:
 

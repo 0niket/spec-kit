@@ -1,8 +1,8 @@
 ---
 description: Execute the implementation plan by processing and executing all tasks defined in tasks.md
 scripts:
-  sh: scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks
-  ps: scripts/powershell/check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks
+  sh: scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks --include-commits --include-milestones
+  ps: scripts/powershell/check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks -IncludeCommits -IncludeMilestones
 ---
 
 ## User Input
@@ -51,10 +51,22 @@ You **MUST** consider the user input before proceeding (if not empty).
 3. Load and analyze the implementation context:
    - **REQUIRED**: Read tasks.md for the complete task list and execution plan
    - **REQUIRED**: Read plan.md for tech stack, architecture, and file structure
+   - **IF EXISTS**: Read commits.md for commit boundaries and repetitive tasks
+   - **IF EXISTS**: Read milestones.md for verification checkpoints
    - **IF EXISTS**: Read data-model.md for entities and relationships
    - **IF EXISTS**: Read contracts/ for API specifications and test requirements
    - **IF EXISTS**: Read research.md for technical decisions and constraints
    - **IF EXISTS**: Read quickstart.md for integration scenarios
+
+   **Commit-Aware Execution** (if commits.md exists):
+   - Execute tasks grouped by commit boundaries
+   - Create git commits at each boundary with planned messages
+   - Include commit ID in commit body for traceability
+
+   **Milestone-Aware Execution** (if milestones.md exists):
+   - Pause at milestone boundaries for human verification
+   - Display verification criteria from milestones.md
+   - Wait for user to verify or reject before proceeding
 
 4. **Project Setup Verification**:
    - **REQUIRED**: Create/verify ignore files based on actual project setup:
@@ -135,4 +147,4 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Confirm the implementation follows the technical plan
    - Report final status with summary of completed work
 
-Note: This command assumes a complete task breakdown exists in tasks.md. If tasks are incomplete or missing, suggest running `/speckit.tasks` first to regenerate the task list.
+Note: This command supports both legacy flat execution (tasks.md only) and structured commit-by-commit execution (with commits.md and milestones.md). For best results, run the full workflow: `/speckit.tasks` → `/speckit.commits` → `/speckit.milestones` → `/speckit.implement`.

@@ -72,7 +72,19 @@ The key is treating specifications as the source of truth, with code as the gene
 
 ## Streamlining SDD with Commands
 
-The SDD methodology is significantly enhanced through three powerful commands that automate the specification → planning → tasking workflow:
+The SDD methodology is significantly enhanced through a complete **Diverge-Converge** workflow that automates the entire specification → planning → implementation cycle:
+
+**Divergent Phase** (Breaking Down):
+
+- `/speckit.specify` → Define what to build
+- `/speckit.plan` → Create technical implementation plan
+- `/speckit.tasks` → Break plan into actionable tasks
+
+**Convergent Phase** (Building Up):
+
+- `/speckit.commits` → Group tasks into logical commits with constitution-driven quality tasks
+- `/speckit.milestones` → Define verification checkpoints for human review
+- `/speckit.implement` → Execute with commit boundaries and milestone pauses
 
 ### The `/speckit.specify` Command
 
@@ -100,7 +112,25 @@ After a plan is created, this command analyzes the plan and related design docum
 1. **Inputs**: Reads `plan.md` (required) and, if present, `data-model.md`, `contracts/`, and `research.md`
 2. **Task Derivation**: Converts contracts, entities, and scenarios into specific tasks
 3. **Parallelization**: Marks independent tasks `[P]` and outlines safe parallel groups
-4. **Output**: Writes `tasks.md` in the feature directory, ready for execution by a Task agent
+4. **Output**: Writes `tasks.md` in the feature directory, ready for commit grouping
+
+### The `/speckit.commits` Command
+
+This command groups tasks into logical commits with constitution-driven repetitive tasks:
+
+1. **Task Grouping**: Groups tasks by user story, file proximity, and phase
+2. **Semantic Commit Messages**: Generates conventional commit messages (feat, fix, test, etc.)
+3. **Repetitive Task Injection**: Adds TDD tasks (RED-GREEN-REFACTOR), linting, and verification based on constitution
+4. **Output**: Writes `commits.md` with commit boundaries and task assignments
+
+### The `/speckit.milestones` Command
+
+This command creates verification checkpoints by grouping commits into milestones:
+
+1. **Milestone Boundaries**: Groups commits by user story into milestones
+2. **Verification Criteria**: Extracts acceptance scenarios from spec.md as verification checklists
+3. **Status Tracking**: Tracks milestone status (pending → verification_required → verified/rejected)
+4. **Output**: Writes `milestones.md` with verification criteria for human review
 
 ### Example: Building a Chat Feature
 
@@ -131,24 +161,33 @@ Total: ~12 hours of documentation work
 # Step 2: Generate implementation plan (5 minutes)
 /speckit.plan WebSocket for real-time messaging, PostgreSQL for history, Redis for presence
 
-# Step 3: Generate executable tasks (5 minutes)
+# Step 3: Generate executable tasks (3 minutes)
 /speckit.tasks
 
-# This automatically creates:
-# - specs/003-chat-system/plan.md
-# - specs/003-chat-system/research.md (WebSocket library comparisons)
-# - specs/003-chat-system/data-model.md (Message and User schemas)
-# - specs/003-chat-system/contracts/ (WebSocket events, REST endpoints)
-# - specs/003-chat-system/quickstart.md (Key validation scenarios)
-# - specs/003-chat-system/tasks.md (Task list derived from the plan)
+# Step 4: Group tasks into commits (2 minutes)
+/speckit.commits
+
+# Step 5: Create verification milestones (2 minutes)
+/speckit.milestones
+
+# Step 6: Execute with commit boundaries and milestone pauses
+/speckit.implement
+
+# This workflow creates:
+# - specs/003-chat-system/spec.md (requirements)
+# - specs/003-chat-system/plan.md (technical plan)
+# - specs/003-chat-system/tasks.md (task breakdown)
+# - specs/003-chat-system/commits.md (commit groupings with TDD tasks)
+# - specs/003-chat-system/milestones.md (verification checkpoints)
 ```
 
-In 15 minutes, you have:
+In 20 minutes, you have:
 
 - A complete feature specification with user stories and acceptance criteria
 - A detailed implementation plan with technology choices and rationale
 - API contracts and data models ready for code generation
-- Comprehensive test scenarios for both automated and manual testing
+- Commit groupings with constitution-driven TDD and linting tasks
+- Verification milestones with acceptance criteria for human review
 - All documents properly versioned in a feature branch
 
 ### The Power of Structured Automation
@@ -159,8 +198,32 @@ These commands don't just save time—they enforce consistency and completeness:
 2. **Traceable Decisions**: Every technical choice links back to specific requirements
 3. **Living Documentation**: Specifications stay in sync with code because they generate it
 4. **Rapid Iteration**: Change requirements and regenerate plans in minutes, not days
+5. **Constitution Enforcement**: Quality requirements (TDD, linting) are automatically woven into every commit
+6. **Human Verification Checkpoints**: Milestones ensure human review at critical points
 
 The commands embody SDD principles by treating specifications as executable artifacts rather than static documents. They transform the specification process from a necessary evil into the driving force of development.
+
+### The Diverge-Converge Model
+
+The workflow follows a natural diverge-converge pattern:
+
+```text
+DIVERGENT (Breaking Down)              CONVERGENT (Building Up)
+┌─────────────────────────┐           ┌─────────────────────────┐
+│  /speckit.specify       │           │  /speckit.commits       │
+│       ↓                 │           │  (tasks → commits)      │
+│  /speckit.plan          │    ───►   │       ↓                 │
+│       ↓                 │           │  /speckit.milestones    │
+│  /speckit.tasks         │           │  (commits → milestones) │
+└─────────────────────────┘           └─────────────────────────┘
+```
+
+**During implementation**, `/speckit.implement`:
+
+- Executes tasks grouped by commit boundaries
+- Creates git commits with planned messages
+- Pauses at milestones for human verification
+- Displays progress visualization throughout
 
 ### Template-Driven Quality: How Structure Constrains LLMs for Better Outcomes
 

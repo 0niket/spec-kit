@@ -11,6 +11,10 @@
 #   --json              Output in JSON format
 #   --require-tasks     Require tasks.md to exist (for implementation phase)
 #   --include-tasks     Include tasks.md in AVAILABLE_DOCS list
+#   --require-commits   Require commits.md to exist (for commit-aware implementation)
+#   --include-commits   Include commits.md in AVAILABLE_DOCS list
+#   --require-milestones Require milestones.md to exist (for milestone-aware implementation)
+#   --include-milestones Include milestones.md in AVAILABLE_DOCS list
 #   --paths-only        Only output path variables (no validation)
 #   --help, -h          Show help message
 #
@@ -25,6 +29,10 @@ set -e
 JSON_MODE=false
 REQUIRE_TASKS=false
 INCLUDE_TASKS=false
+REQUIRE_COMMITS=false
+INCLUDE_COMMITS=false
+REQUIRE_MILESTONES=false
+INCLUDE_MILESTONES=false
 PATHS_ONLY=false
 
 for arg in "$@"; do
@@ -37,6 +45,18 @@ for arg in "$@"; do
             ;;
         --include-tasks)
             INCLUDE_TASKS=true
+            ;;
+        --require-commits)
+            REQUIRE_COMMITS=true
+            ;;
+        --include-commits)
+            INCLUDE_COMMITS=true
+            ;;
+        --require-milestones)
+            REQUIRE_MILESTONES=true
+            ;;
+        --include-milestones)
+            INCLUDE_MILESTONES=true
             ;;
         --paths-only)
             PATHS_ONLY=true
@@ -51,16 +71,23 @@ OPTIONS:
   --json              Output in JSON format
   --require-tasks     Require tasks.md to exist (for implementation phase)
   --include-tasks     Include tasks.md in AVAILABLE_DOCS list
+  --require-commits   Require commits.md to exist (for commit-aware implementation)
+  --include-commits   Include commits.md in AVAILABLE_DOCS list
+  --require-milestones Require milestones.md to exist (for milestone-aware implementation)
+  --include-milestones Include milestones.md in AVAILABLE_DOCS list
   --paths-only        Only output path variables (no prerequisite validation)
   --help, -h          Show this help message
 
 EXAMPLES:
   # Check task prerequisites (plan.md required)
   ./check-prerequisites.sh --json
-  
+
   # Check implementation prerequisites (plan.md + tasks.md required)
   ./check-prerequisites.sh --json --require-tasks --include-tasks
-  
+
+  # Check commit-aware implementation prerequisites
+  ./check-prerequisites.sh --json --require-commits --include-commits --include-milestones
+
   # Get feature paths only (no validation)
   ./check-prerequisites.sh --paths-only
   
@@ -119,6 +146,20 @@ if $REQUIRE_TASKS && [[ ! -f "$TASKS" ]]; then
     exit 1
 fi
 
+# Check for commits.md if required
+if $REQUIRE_COMMITS && [[ ! -f "$COMMITS" ]]; then
+    echo "ERROR: commits.md not found in $FEATURE_DIR" >&2
+    echo "Run /speckit.commits first to create the commit groupings." >&2
+    exit 1
+fi
+
+# Check for milestones.md if required
+if $REQUIRE_MILESTONES && [[ ! -f "$MILESTONES" ]]; then
+    echo "ERROR: milestones.md not found in $FEATURE_DIR" >&2
+    echo "Run /speckit.milestones first to create the milestones." >&2
+    exit 1
+fi
+
 # Build list of available documents
 docs=()
 
@@ -136,6 +177,16 @@ fi
 # Include tasks.md if requested and it exists
 if $INCLUDE_TASKS && [[ -f "$TASKS" ]]; then
     docs+=("tasks.md")
+fi
+
+# Include commits.md if requested and it exists
+if $INCLUDE_COMMITS && [[ -f "$COMMITS" ]]; then
+    docs+=("commits.md")
+fi
+
+# Include milestones.md if requested and it exists
+if $INCLUDE_MILESTONES && [[ -f "$MILESTONES" ]]; then
+    docs+=("milestones.md")
 fi
 
 # Output results
@@ -162,5 +213,13 @@ else
     
     if $INCLUDE_TASKS; then
         check_file "$TASKS" "tasks.md"
+    fi
+
+    if $INCLUDE_COMMITS; then
+        check_file "$COMMITS" "commits.md"
+    fi
+
+    if $INCLUDE_MILESTONES; then
+        check_file "$MILESTONES" "milestones.md"
     fi
 fi
