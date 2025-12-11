@@ -701,16 +701,20 @@ See [`.specify/memory/constitution.md`](.specify/memory/constitution.md) for the
 
 ## 👥 Maintainers
 
-- Den Delimarsky ([@localden](https://github.com/localden))
-- John Lam ([@jflam](https://github.com/jflam))
+- Aniket ([@0niket](https://github.com/0niket))
 
 ## 💬 Support
 
-For support, please open a [GitHub issue](https://github.com/github/spec-kit/issues/new). We welcome bug reports, feature requests, and questions about using Spec-Driven Development.
+For support, please open a [GitHub issue](https://github.com/0niket/spec-kit/issues/new). We welcome bug reports, feature requests, and questions about using Spec-Driven Development.
 
 ## 🙏 Acknowledgements
 
-This project is heavily influenced by and based on the work and research of [John Lam](https://github.com/jflam).
+This project is a fork of the original [Spec Kit](https://github.com/github/spec-kit) created by:
+
+- Den Delimarsky ([@localden](https://github.com/localden))
+- John Lam ([@jflam](https://github.com/jflam))
+
+Special thanks to [John Lam](https://github.com/jflam) for his foundational work and research on Spec-Driven Development.
 
 ## 📄 License
 
