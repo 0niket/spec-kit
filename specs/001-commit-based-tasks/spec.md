@@ -1,160 +1,199 @@
-# Feature Specification: Commit-Based Task Orchestration
+# Feature Specification: Diverge-Converge Workflow
 
 **Feature Branch**: `001-commit-based-tasks`
 **Created**: 2025-12-11
 **Status**: Draft
-**Input**: User description: "Introduce commits as the bridge between planning and tasks, with repetitive and non-repetitive task types driven by the project constitution"
+**Input**: User description: "Implement diverge-converge workflow where specification breaks down into plan, plan breaks down into tasks (divergent), then tasks accumulate into commits, commits accumulate into milestones (convergent). Commits include repetitive and non-repetitive tasks based on constitution."
 
 ## Problem Statement
 
-The current Spec Kit workflow has three planning layers: **Specification → Planning → Tasks**. However, there is a gap between the planning phase and task execution. Tasks are generated as flat lists without clear boundaries for what constitutes a "done" unit of work. This leads to:
+The current Spec Kit workflow has three planning layers: **Specification → Planning → Tasks**. However, there are two critical gaps:
 
-1. **Quality practices as afterthoughts** - TDD, testing, and documentation are separate tasks rather than integral parts of each deliverable
-2. **Unclear progress tracking** - Without commit boundaries, it's hard to know when a unit of work is complete
-3. **Constitution principles not enforced** - Quality requirements defined in the constitution are not automatically woven into the workflow
+1. **No convergence mechanism** - Tasks are generated as flat lists with no way to group them into meaningful deliverables
+2. **No verification checkpoints** - There's no defined point where manual verification of the implementation occurs
+3. **Constitution principles not enforced during execution** - Quality requirements are checked during planning but not woven into task execution
 
 ## Solution Overview
 
-Introduce **Commits** as the intermediate layer between Planning and Tasks:
+Introduce a **Diverge-Converge** workflow model:
 
-**Specification → Planning → Commits → Tasks**
+```
+DIVERGENT PHASES (Breaking Down)          CONVERGENT PHASES (Building Up)
+┌─────────────────────────────────┐      ┌─────────────────────────────────┐
+│  Specification                  │      │  Tasks                          │
+│       ↓                         │      │       ↓                         │
+│  Plan (breakdown of spec)       │      │  Commits (accumulation of tasks)│
+│       ↓                         │      │       ↓                         │
+│  Tasks (breakdown of plan)      │      │  Milestones (verification point)│
+└─────────────────────────────────┘      └─────────────────────────────────┘
+```
 
-Where:
+**Divergent Phases** (existing, enhanced):
+1. `/speckit.specify` - Define what to build
+2. `/speckit.plan` - Break specification into technical approach
+3. `/speckit.tasks` - Break plan into actionable tasks
 
-- **Commits** are planned units of deliverable work (each commit should leave the codebase in a working state)
-- **Tasks** are grouped under commits and divided into two types:
-  - **Repetitive tasks**: Automatically derived from constitution principles (e.g., TDD cycles, test updates)
-  - **Non-repetitive tasks**: The actual implementation work unique to each commit
+**Convergent Phases** (new):
+1. `/speckit.commits` - Group tasks into commits with constitution-driven repetitive tasks
+2. `/speckit.milestones` - Group commits into milestones requiring manual verification
+
+**Key Concepts**:
+- **Commits** accumulate tasks (not the other way around)
+- Each commit has two types of tasks:
+  - **Repetitive tasks**: Derived from constitution (TDD, linting, testing)
+  - **Non-repetitive tasks**: The actual implementation work
+- **Milestones** are verification checkpoints requiring human review
 
 ## User Scenarios & Testing *(mandatory)*
 
-### User Story 1 - Plan Commits from Implementation Plan (Priority: P1)
+### User Story 1 - Group Tasks into Commits (Priority: P1)
 
-As a developer using Spec Kit, I want the `/speckit.tasks` command to generate a list of planned commits (not just tasks) so that I have clear boundaries for what constitutes a complete unit of work.
+As a developer, I want to run `/speckit.commits` to group my tasks into logical commits, so that I have clear boundaries for what constitutes a complete, committable unit of work.
 
-**Why this priority**: This is the foundational change - without commit planning, the rest of the feature cannot work. Commits provide the structure that enables everything else.
+**Why this priority**: This is the foundation of the convergent phase - without commit grouping, tasks remain a flat list.
 
-**Independent Test**: Can be fully tested by running `/speckit.tasks` on a sample plan and verifying the output contains commit boundaries with descriptions of what each commit achieves.
+**Independent Test**: Can be fully tested by running `/speckit.commits` on a tasks.md and verifying the output contains commit groupings with task assignments.
 
 **Acceptance Scenarios**:
 
-1. **Given** a completed `plan.md`, **When** I run `/speckit.tasks`, **Then** the output `tasks.md` contains a list of planned commits, each with a clear description of the deliverable
-2. **Given** a plan with multiple user stories, **When** commits are generated, **Then** each commit maps to a logical, independently testable unit of the implementation
-3. **Given** a generated commits list, **When** I review it, **Then** each commit description follows the conventional commit format (type: description)
+1. **Given** a completed `tasks.md`, **When** I run `/speckit.commits`, **Then** the output `commits.md` contains commits with grouped tasks
+2. **Given** tasks that logically belong together (e.g., model + service + endpoint for one feature), **When** commits are generated, **Then** they are grouped into a single commit
+3. **Given** a generated commits list, **When** I review it, **Then** each commit has a conventional commit message (type: description)
+4. **Given** independent tasks that can be committed separately, **When** commits are generated, **Then** they are organized into separate commits
 
 ---
 
-### User Story 2 - Generate Repetitive Tasks from Constitution (Priority: P1)
+### User Story 2 - Add Repetitive Tasks from Constitution (Priority: P1)
 
-As a developer, I want repetitive quality tasks (like TDD cycles, test updates) to be automatically generated for each commit based on my project's constitution, so that quality practices are built into every deliverable rather than bolted on.
+As a developer, I want `/speckit.commits` to automatically add repetitive tasks to each commit based on my constitution, so that quality practices are enforced at the commit level.
 
-**Why this priority**: This is the core innovation - ensuring constitution-defined quality practices are automatically enforced at the commit level.
+**Why this priority**: This ensures constitution compliance is built into every commit, not checked after the fact.
 
-**Independent Test**: Can be tested by creating a constitution with TDD requirements and verifying that each planned commit automatically includes RED-GREEN-REFACTOR tasks.
+**Independent Test**: Can be tested by having a constitution with TDD requirements and verifying each commit includes RED-GREEN-REFACTOR tasks.
 
 **Acceptance Scenarios**:
 
-1. **Given** a constitution that requires TDD, **When** commits are generated, **Then** each commit includes repetitive tasks for: write failing test → implement → refactor
-2. **Given** a constitution that requires Playwright tests for UI changes, **When** a commit involves UI changes, **Then** repetitive tasks for Playwright test creation/update are included
-3. **Given** a constitution with linting requirements, **When** commits are generated, **Then** each commit includes a verification task for linting
-4. **Given** a constitution with documentation requirements, **When** a commit adds/changes features, **Then** repetitive tasks for documentation updates are included
+1. **Given** a constitution requiring TDD, **When** commits are generated, **Then** each commit includes: write failing test → implement → verify test passes → refactor
+2. **Given** a constitution requiring linting, **When** commits are generated, **Then** each commit includes a "run linter" task at the end
+3. **Given** a constitution requiring documentation updates, **When** a commit changes public interfaces, **Then** a documentation update task is included
+4. **Given** a constitution with Playwright test requirements, **When** a commit involves UI changes, **Then** Playwright test tasks are included
 
 ---
 
-### User Story 3 - Generate Non-Repetitive Tasks for Implementation (Priority: P2)
+### User Story 3 - Define Milestones for Verification (Priority: P2)
 
-As a developer, I want the actual implementation work to be broken down into non-repetitive tasks under each commit, so that I have a clear checklist of what needs to be done for each deliverable.
+As a developer, I want to run `/speckit.milestones` to group commits into milestones that require manual verification, so that I have clear checkpoints for human review.
 
-**Why this priority**: Without the implementation tasks, the commits would only have quality checks but no actual work.
+**Why this priority**: Milestones provide the human-in-the-loop verification that ensures quality before proceeding to the next phase.
 
-**Independent Test**: Can be tested by verifying that each commit contains specific implementation tasks derived from the plan.
+**Independent Test**: Can be tested by running `/speckit.milestones` on commits.md and verifying milestone boundaries with verification criteria.
 
 **Acceptance Scenarios**:
 
-1. **Given** a commit for "Add user model", **When** tasks are generated, **Then** non-repetitive tasks include: create model file, define attributes, add validation rules
-2. **Given** a plan with technical decisions documented, **When** non-repetitive tasks are generated, **Then** they reference the relevant technical decisions
-3. **Given** a commit with dependencies on another commit, **When** tasks are generated, **Then** the dependency is clearly noted
+1. **Given** a completed `commits.md`, **When** I run `/speckit.milestones`, **Then** the output `milestones.md` groups commits into milestones
+2. **Given** a milestone definition, **When** I review it, **Then** it includes specific verification criteria (what to check)
+3. **Given** a milestone is reached during implementation, **When** the AI agent reaches it, **Then** it pauses and requests manual verification
+4. **Given** multiple user stories in the spec, **When** milestones are generated, **Then** each user story maps to at least one milestone
 
 ---
 
-### User Story 4 - Execute Commits Sequentially (Priority: P2)
+### User Story 4 - Execute with Commit and Milestone Boundaries (Priority: P2)
 
-As a developer, I want `/speckit.implement` to execute commits one at a time, completing all tasks (repetitive + non-repetitive) for each commit before moving to the next, so that the codebase remains in a working state after each commit.
+As a developer, I want `/speckit.implement` to respect commit and milestone boundaries, executing tasks commit-by-commit and pausing at milestones for verification.
 
-**Why this priority**: This ensures the commit-based workflow is actually followed during implementation.
+**Why this priority**: This ensures the workflow structure is actually followed during execution.
 
-**Independent Test**: Can be tested by running `/speckit.implement` and verifying that actual git commits are created at the defined boundaries.
+**Independent Test**: Can be tested by running `/speckit.implement` and verifying it creates git commits at defined boundaries and pauses at milestones.
 
 **Acceptance Scenarios**:
 
-1. **Given** a tasks.md with 5 planned commits, **When** I run `/speckit.implement`, **Then** the AI agent executes all tasks for commit 1 before starting commit 2
-2. **Given** a commit with repetitive TDD tasks, **When** the commit is being implemented, **Then** tests are written before implementation code
-3. **Given** a commit is complete, **When** all its tasks pass, **Then** a git commit is created with the planned commit message
-4. **Given** a commit fails its verification tasks (linting, tests), **When** reviewed, **Then** the implementation pauses for fixes before proceeding
+1. **Given** a milestones.md with 3 milestones, **When** I run `/speckit.implement`, **Then** implementation pauses after each milestone for verification
+2. **Given** a commit with repetitive tasks, **When** the commit is executed, **Then** repetitive tasks run in the correct order (test before implement)
+3. **Given** a commit completes successfully, **When** all tasks pass, **Then** a git commit is created with the planned message
+4. **Given** a milestone verification fails, **When** the user rejects, **Then** implementation can roll back to the milestone start
 
 ---
 
-### User Story 5 - Constitution-Aware Task Templates (Priority: P3)
+### User Story 5 - View Workflow Progress (Priority: P3)
 
-As a project maintainer, I want to define custom repetitive task templates in the constitution, so that project-specific quality practices are automatically included in every commit.
+As a developer, I want to see a visual representation of my diverge-converge workflow, so that I understand where I am in the process.
 
-**Why this priority**: This enables customization beyond the default repetitive tasks.
+**Why this priority**: Visibility into progress helps developers track complex implementations.
 
-**Independent Test**: Can be tested by adding a custom task template to the constitution and verifying it appears in generated commits.
+**Independent Test**: Can be tested by running a status command and verifying it shows current phase, completed items, and next steps.
 
 **Acceptance Scenarios**:
 
-1. **Given** a constitution with a custom "security review" repetitive task, **When** commits are generated, **Then** each commit includes the security review task
-2. **Given** a constitution with conditional repetitive tasks (e.g., "API documentation for API changes"), **When** a commit involves API changes, **Then** the conditional task is included
-3. **Given** a constitution without custom templates, **When** commits are generated, **Then** default repetitive tasks based on detected patterns are used
+1. **Given** a project mid-implementation, **When** I check status, **Then** I see which commits are complete and which milestone I'm working toward
+2. **Given** a completed milestone, **When** I view progress, **Then** it shows verification status (passed/failed/pending)
+3. **Given** multiple milestones, **When** I view the workflow, **Then** I see the full diverge-converge structure
 
 ---
 
 ### Edge Cases
 
-- What happens when a commit's non-repetitive tasks fail but repetitive tasks pass? → The commit should not be created; implementation should pause for fixes
-- How does the system handle commits that span multiple files with different test requirements? → Repetitive tasks should be aggregated at the commit level, not per-file
-- What happens when the constitution is updated mid-implementation? → New commits should use updated constitution; in-progress commits continue with original requirements
-- How are circular dependencies between commits handled? → Validation should fail during `/speckit.tasks` with a clear error message
+- What happens when a commit's tasks fail? → The commit is not created; implementation pauses for fixes
+- What happens when the constitution is updated mid-implementation? → New commits use updated constitution; in-progress commits continue with original
+- How are task dependencies across commits handled? → Commits must be executed in order; cross-commit dependencies are validated during `/speckit.commits`
+- What if a milestone verification is rejected? → User can choose to fix issues or roll back; implementation pauses until resolved
+- What if tasks don't logically group into commits? → `/speckit.commits` suggests groupings but allows manual override
 
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
 
-- **FR-001**: The `/speckit.tasks` command MUST generate a `tasks.md` that organizes work into planned commits
-- **FR-002**: Each commit MUST have a clear, conventional-format description of its deliverable
-- **FR-003**: The system MUST parse the constitution to identify repetitive task requirements
-- **FR-004**: Repetitive tasks MUST be automatically added to each commit based on constitution principles
-- **FR-005**: Non-repetitive tasks MUST be derived from the implementation plan and organized under commits
-- **FR-006**: The `/speckit.implement` command MUST execute commits sequentially, completing all tasks before creating a git commit
-- **FR-007**: The system MUST validate that all repetitive tasks pass before allowing a commit to be created
-- **FR-008**: Task dependencies within a commit MUST be respected during execution order
-- **FR-009**: The system MUST support conditional repetitive tasks (tasks that apply only to certain types of changes)
-- **FR-010**: The tasks.md format MUST clearly distinguish between repetitive and non-repetitive tasks
+**Divergent Phase (existing, enhanced)**:
+- **FR-001**: `/speckit.specify` MUST create a specification document
+- **FR-002**: `/speckit.plan` MUST break the specification into a technical plan
+- **FR-003**: `/speckit.tasks` MUST break the plan into actionable tasks
+
+**Convergent Phase (new)**:
+- **FR-004**: `/speckit.commits` MUST group tasks into logical commits
+- **FR-005**: `/speckit.commits` MUST parse the constitution and add repetitive tasks to each commit
+- **FR-006**: Each commit MUST have both repetitive tasks (from constitution) and non-repetitive tasks (from plan)
+- **FR-007**: `/speckit.milestones` MUST group commits into milestones with verification criteria
+- **FR-008**: Each milestone MUST define what needs to be manually verified
+- **FR-009**: `/speckit.implement` MUST execute tasks commit-by-commit
+- **FR-010**: `/speckit.implement` MUST pause at milestones for manual verification
+- **FR-011**: `/speckit.implement` MUST create git commits at defined boundaries
+- **FR-012**: The system MUST support conditional repetitive tasks based on commit content
 
 ### Key Entities
 
-- **Commit**: A planned unit of deliverable work with a description, list of tasks, and completion criteria
-- **Repetitive Task**: A task derived from constitution principles that applies to every (or conditional) commit
+- **Task**: The smallest unit of work (from `/speckit.tasks`)
+- **Commit**: An accumulation of tasks that forms a single git commit
+  - Contains repetitive tasks (from constitution)
+  - Contains non-repetitive tasks (from plan)
+- **Milestone**: An accumulation of commits that requires manual verification
+- **Repetitive Task**: A task derived from constitution that applies to every (or conditional) commit
 - **Non-Repetitive Task**: A task specific to the implementation work of a single commit
-- **Constitution Principle**: A quality requirement that may generate repetitive tasks (e.g., TDD, linting, documentation)
-- **Task Dependency**: A relationship indicating one task must complete before another can begin
+- **Verification Criteria**: What must be checked at a milestone (defined by user or derived from spec)
 
 ## Success Criteria *(mandatory)*
 
 ### Measurable Outcomes
 
-- **SC-001**: 100% of commits generated by `/speckit.tasks` include repetitive tasks derived from the constitution
-- **SC-002**: Users can understand the scope of each commit by reading its description alone (no need to read individual tasks)
-- **SC-003**: Implementation via `/speckit.implement` creates git commits at the planned boundaries 90%+ of the time
-- **SC-004**: Quality violations (failed tests, linting errors) are caught before git commits are created
-- **SC-005**: Time from plan to implementation reduces by enabling AI agents to work autonomously through well-defined commit boundaries
-- **SC-006**: Users report that quality practices feel "built-in" rather than "bolted on" in post-implementation surveys
+- **SC-001**: 100% of commits generated include both repetitive and non-repetitive tasks
+- **SC-002**: Users can understand the scope of each commit by reading its message alone
+- **SC-003**: Implementation pauses at every milestone for manual verification 100% of the time
+- **SC-004**: Quality violations (failed tests, linting) are caught before git commits are created
+- **SC-005**: Users report clearer understanding of progress through diverge-converge visualization
+- **SC-006**: Time spent on post-implementation fixes reduces due to milestone verification checkpoints
 
 ## Assumptions
 
-- The project constitution follows the established format with clearly identifiable principles
+- The project constitution follows the established format with identifiable principles
 - Git is available and configured in the project repository
-- AI agents support the concept of executing tasks in sequence and creating commits
-- The existing `/speckit.tasks` template structure can be extended to support commit-based organization
-- Repetitive tasks for common patterns (TDD, linting, testing) can be detected from constitution keywords
+- AI agents support pausing for human verification
+- The existing `/speckit.tasks` output can be parsed for commit grouping
+- Repetitive tasks can be detected from constitution keywords (TDD, lint, test, document)
+- Users will perform manual verification at milestones (not skip them)
+
+## New Slash Commands Required
+
+| Command | Phase | Purpose |
+| ------- | ----- | ------- |
+| `/speckit.commits` | Convergent | Group tasks into commits, add constitution-driven repetitive tasks |
+| `/speckit.milestones` | Convergent | Group commits into milestones with verification criteria |
+
+The existing `/speckit.implement` command will be enhanced to respect commit and milestone boundaries.

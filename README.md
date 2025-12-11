@@ -18,25 +18,37 @@
 
 > **🔀 Why This Fork?**
 >
-> This is a fork of the original [Spec Kit](https://github.com/github/spec-kit) with enhancements to bridge the gap between planning and execution.
+> This is a fork of the original [Spec Kit](https://github.com/github/spec-kit) that introduces a **Diverge-Converge** workflow model.
 >
-> **The Problem**: In the original Spec Kit, the constitution (your project's quality principles) influences the *plan* but not the *tasks* or *execution*:
+> **The Problem**: The original Spec Kit only diverges (breaks down work) but never converges:
 >
 > | Phase | Constitution Used? | Gap |
 > | ----- | ------------------ | --- |
 > | `/speckit.plan` | ✅ Gates workflow | Works well |
 > | `/speckit.analyze` | ✅ Validates compliance | Works well |
 > | `/speckit.tasks` | ❌ Not loaded | Tasks don't reflect constitution |
-> | `/speckit.implement` | ❌ Not loaded | No quality checks at commit time |
+> | `/speckit.implement` | ❌ Not loaded | No verification checkpoints |
 >
-> **The Solution**: This fork introduces **Commits** as the bridge between planning and tasks:
+> **The Solution**: A complete **Diverge-Converge** workflow:
 >
-> - **Commits are planned ahead of time** — Tasks achieve commits, not the other way around
-> - **Two types of tasks**:
->   - **Repetitive tasks** — Automatically derived from your constitution (e.g., TDD's RED-GREEN-REFACTOR cycle, Playwright tests for UI changes, linting verification)
->   - **Non-repetitive tasks** — The actual implementation work unique to each commit
+> ```
+> DIVERGENT (Breaking Down)              CONVERGENT (Building Up)
+> ┌─────────────────────────┐           ┌─────────────────────────┐
+> │  /speckit.specify       │           │  /speckit.commits       │
+> │       ↓                 │           │  (tasks → commits)      │
+> │  /speckit.plan          │    ───►   │       ↓                 │
+> │       ↓                 │           │  /speckit.milestones    │
+> │  /speckit.tasks         │           │  (commits → milestones) │
+> └─────────────────────────┘           └─────────────────────────┘
+> ```
 >
-> This ensures that quality practices defined in your constitution are automatically woven into every commit, not bolted on as an afterthought.
+> **Key Concepts**:
+> - **Commits** accumulate tasks (each commit includes repetitive + non-repetitive tasks)
+> - **Repetitive tasks** — Derived from constitution (TDD, linting, Playwright tests)
+> - **Non-repetitive tasks** — The actual implementation work
+> - **Milestones** — Verification checkpoints requiring manual human review
+>
+> This ensures quality practices are woven into every commit, with clear checkpoints for human verification.
 
 ---
 

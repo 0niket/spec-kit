@@ -1,4 +1,4 @@
-# Specification Quality Checklist: Commit-Based Task Orchestration
+# Specification Quality Checklist: Diverge-Converge Workflow
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning
 **Created**: 2025-12-11
@@ -32,7 +32,7 @@
 ## Notes
 
 - Specification is complete and ready for `/speckit.clarify` or `/speckit.plan`
-- Problem statement clearly articulates the gap in the current workflow
-- Solution overview provides a clear mental model (Specification → Planning → Commits → Tasks)
-- Two task types (repetitive vs non-repetitive) are well-defined
-- Edge cases cover key failure scenarios
+- Diverge-Converge model clearly articulated with ASCII diagram
+- Two new slash commands identified: `/speckit.commits` and `/speckit.milestones`
+- Key entities defined: Task, Commit, Milestone, Repetitive Task, Non-Repetitive Task
+- Edge cases cover failure scenarios and mid-implementation changes
