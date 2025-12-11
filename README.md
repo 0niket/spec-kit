@@ -20,14 +20,23 @@
 >
 > This is a fork of the original [Spec Kit](https://github.com/github/spec-kit) with enhancements to bridge the gap between planning and execution.
 >
-> The original Spec Kit has three planning layers: **Specification → Planning → Tasks**. However, there's a missing link between planning and tasks. This fork introduces the concept of **Commits** as the bridge:
+> **The Problem**: In the original Spec Kit, the constitution (your project's quality principles) influences the *plan* but not the *tasks* or *execution*:
+>
+> | Phase | Constitution Used? | Gap |
+> | ----- | ------------------ | --- |
+> | `/speckit.plan` | ✅ Gates workflow | Works well |
+> | `/speckit.analyze` | ✅ Validates compliance | Works well |
+> | `/speckit.tasks` | ❌ Not loaded | Tasks don't reflect constitution |
+> | `/speckit.implement` | ❌ Not loaded | No quality checks at commit time |
+>
+> **The Solution**: This fork introduces **Commits** as the bridge between planning and tasks:
 >
 > - **Commits are planned ahead of time** — Tasks achieve commits, not the other way around
 > - **Two types of tasks**:
->   - **Repetitive tasks** — Driven by your constitution (e.g., TDD's RED-GREEN-REFACTOR cycle for each commit, Playwright tests updated with UI changes)
->   - **Non-repetitive tasks** — The actual work required to implement the specification
+>   - **Repetitive tasks** — Automatically derived from your constitution (e.g., TDD's RED-GREEN-REFACTOR cycle, Playwright tests for UI changes, linting verification)
+>   - **Non-repetitive tasks** — The actual implementation work unique to each commit
 >
-> This approach ensures that quality practices defined in your constitution are automatically woven into every commit, not bolted on as an afterthought.
+> This ensures that quality practices defined in your constitution are automatically woven into every commit, not bolted on as an afterthought.
 
 ---
 
