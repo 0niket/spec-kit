@@ -102,18 +102,21 @@ As a developer, I want to run `/speckit.milestones` to group commits into milest
 
 ### User Story 4 - Execute with Commit and Milestone Boundaries (Priority: P2)
 
-As a developer, I want `/speckit.implement` to respect commit and milestone boundaries, executing tasks commit-by-commit and pausing at milestones for verification.
+As a developer, I want `/speckit.implement` to load and respect `tasks.md`, `commits.md`, and `milestones.md`, executing tasks commit-by-commit and pausing at milestones for verification.
 
 **Why this priority**: This ensures the workflow structure is actually followed during execution.
 
-**Independent Test**: Can be tested by running `/speckit.implement` and verifying it creates git commits at defined boundaries and pauses at milestones.
+**Independent Test**: Can be tested by running `/speckit.implement` and verifying it loads all three documents, creates git commits at defined boundaries, and pauses at milestones.
 
 **Acceptance Scenarios**:
 
-1. **Given** a milestones.md with 3 milestones, **When** I run `/speckit.implement`, **Then** implementation pauses after each milestone for verification
-2. **Given** a commit with repetitive tasks, **When** the commit is executed, **Then** repetitive tasks run in the correct order (test before implement)
-3. **Given** a commit completes successfully, **When** all tasks pass, **Then** a git commit is created with the planned message
-4. **Given** a milestone verification fails, **When** the user rejects, **Then** implementation can roll back to the milestone start
+1. **Given** a feature directory with `tasks.md`, `commits.md`, and `milestones.md`, **When** I run `/speckit.implement`, **Then** all three documents are loaded and used to guide implementation
+2. **Given** a `commits.md` defining task groupings, **When** implementation runs, **Then** tasks are executed in the order specified by commits
+3. **Given** a `milestones.md` with 3 milestones, **When** I run `/speckit.implement`, **Then** implementation pauses after each milestone for verification
+4. **Given** a commit with repetitive tasks (from constitution), **When** the commit is executed, **Then** repetitive tasks run in the correct order (test before implement)
+5. **Given** a commit completes successfully, **When** all tasks pass, **Then** a git commit is created with the planned message from `commits.md`
+6. **Given** a milestone verification fails, **When** the user rejects, **Then** implementation can roll back to the milestone start
+7. **Given** `commits.md` or `milestones.md` is missing, **When** I run `/speckit.implement`, **Then** it fails with a clear error message instructing to run `/speckit.commits` and `/speckit.milestones` first
 
 ---
 
@@ -140,6 +143,8 @@ As a developer, I want to see a visual representation of my diverge-converge wor
 - How are task dependencies across commits handled? → Commits must be executed in order; cross-commit dependencies are validated during `/speckit.commits`
 - What if a milestone verification is rejected? → User can choose to fix issues or roll back; implementation pauses until resolved
 - What if tasks don't logically group into commits? → `/speckit.commits` suggests groupings but allows manual override
+- What if `/speckit.implement` is run without `commits.md` or `milestones.md`? → Clear error with instructions to run the prerequisite commands
+- What if `tasks.md` has tasks not referenced in `commits.md`? → Warning is shown; orphaned tasks are listed for user review
 
 ## Requirements *(mandatory)*
 
@@ -158,10 +163,15 @@ As a developer, I want to see a visual representation of my diverge-converge wor
 - **FR-006**: Each commit MUST have both repetitive tasks (from constitution) and non-repetitive tasks (from plan)
 - **FR-007**: `/speckit.milestones` MUST group commits into milestones with verification criteria
 - **FR-008**: Each milestone MUST define what needs to be manually verified
-- **FR-009**: `/speckit.implement` MUST execute tasks commit-by-commit
-- **FR-010**: `/speckit.implement` MUST pause at milestones for manual verification
-- **FR-011**: `/speckit.implement` MUST create git commits at defined boundaries
-- **FR-012**: The system MUST support conditional repetitive tasks based on commit content
+
+**Implementation Phase (enhanced)**:
+
+- **FR-009**: `/speckit.implement` MUST load and consider `tasks.md`, `commits.md`, and `milestones.md`
+- **FR-010**: `/speckit.implement` MUST execute tasks in the order defined by `commits.md`
+- **FR-011**: `/speckit.implement` MUST pause at milestones defined in `milestones.md` for manual verification
+- **FR-012**: `/speckit.implement` MUST create git commits at boundaries defined in `commits.md`
+- **FR-013**: `/speckit.implement` MUST validate that all three documents exist before starting
+- **FR-014**: The system MUST support conditional repetitive tasks based on commit content
 
 ### Key Entities
 
