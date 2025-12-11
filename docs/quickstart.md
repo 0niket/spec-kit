@@ -5,7 +5,7 @@ This guide will help you get started with Spec-Driven Development using Spec Kit
 > [!NOTE]
 > All automation scripts now provide both Bash (`.sh`) and PowerShell (`.ps1`) variants. The `specify` CLI auto-selects based on OS unless you pass `--script sh|ps`.
 
-## The 6-Step Process
+## The 8-Step Process
 
 > [!TIP]
 > **Context Awareness**: Spec Kit commands automatically detect the active feature based on your current Git branch (e.g., `001-feature-name`). To switch between different specifications, simply switch Git branches.
@@ -61,7 +61,7 @@ uvx --from git+https://github.com/github/spec-kit.git specify init <PROJECT_NAME
 /speckit.plan The application uses Vite with minimal number of libraries. Use vanilla HTML, CSS, and JavaScript as much as possible. Images are not uploaded anywhere and metadata is stored in a local SQLite database.
 ```
 
-### Step 6: Break Down and Implement
+### Step 6: Break Down into Tasks
 
 **In the chat**, use the `/speckit.tasks` slash command to create an actionable task list.
 
@@ -75,11 +75,34 @@ Optionally, validate the plan with `/speckit.analyze`:
 /speckit.analyze
 ```
 
-Then, use the `/speckit.implement` slash command to execute the plan.
+### Step 7: Group Tasks into Commits and Milestones
+
+**In the chat**, use `/speckit.commits` to group tasks into logical commits with constitution-driven quality tasks (TDD, linting):
+
+```markdown
+/speckit.commits
+```
+
+Then use `/speckit.milestones` to create verification checkpoints:
+
+```markdown
+/speckit.milestones
+```
+
+### Step 8: Implement with Verification Checkpoints
+
+**In the chat**, use the `/speckit.implement` slash command to execute the plan with commit boundaries and milestone pauses:
 
 ```markdown
 /speckit.implement
 ```
+
+The implementation will:
+
+- Execute tasks grouped by commit
+- Create git commits at boundaries with planned messages
+- Pause at milestones for human verification
+- Display progress visualization throughout
 
 ## Detailed Example: Building Taskify
 
@@ -135,7 +158,21 @@ Be specific about your tech stack and technical requirements:
 /speckit.plan We are going to generate this using .NET Aspire, using Postgres as the database. The frontend should use Blazor server with drag-and-drop task boards, real-time updates. There should be a REST API created with a projects API, tasks API, and a notifications API.
 ```
 
-### Step 6: Validate and Implement
+### Step 6: Group into Commits and Milestones
+
+Group tasks into logical commits with constitution-driven TDD tasks:
+
+```bash
+/speckit.commits
+```
+
+Create verification milestones from commits:
+
+```bash
+/speckit.milestones
+```
+
+### Step 7: Validate and Implement
 
 Have your AI agent audit the implementation plan using `/speckit.analyze`:
 
@@ -143,11 +180,13 @@ Have your AI agent audit the implementation plan using `/speckit.analyze`:
 /speckit.analyze
 ```
 
-Finally, implement the solution:
+Finally, implement the solution with commit boundaries and milestone pauses:
 
 ```bash
 /speckit.implement
 ```
+
+The implementation will pause at each milestone for human verification of acceptance criteria.
 
 ## Key Principles
 

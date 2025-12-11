@@ -26,8 +26,8 @@
 
 **Purpose**: Project initialization and template creation
 
-- [ ] T001 Create commits-template.md for commits.md output `.specify/templates/commits-template.md`
-- [ ] T002 [P] Create milestones-template.md for milestones.md output `.specify/templates/milestones-template.md`
+- [x] T001 Create commits-template.md for commits.md output `.specify/templates/commits-template.md`
+- [x] T002 [P] Create milestones-template.md for milestones.md output `.specify/templates/milestones-template.md`
 
 ---
 
@@ -37,11 +37,11 @@
 
 **CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T003 Write bats test for parse-constitution.sh `tests/bash/test_parse_constitution.bats`
-- [ ] T004 Create parse-constitution.sh script to extract repetitive tasks from constitution `.specify/scripts/bash/parse-constitution.sh`
-- [ ] T005 Write bats test for enhanced check-prerequisites.sh flags `tests/bash/test_check_prerequisites.bats`
-- [ ] T006 Enhance check-prerequisites.sh with --require-commits and --include-commits flags `.specify/scripts/bash/check-prerequisites.sh`
-- [ ] T007 [P] Add COMMITS and MILESTONES path helpers to common.sh `.specify/scripts/bash/common.sh`
+- [x] T003 Write bats test for parse-constitution.sh `tests/bash/test_parse_constitution.bats`
+- [x] T004 Create parse-constitution.sh script to extract repetitive tasks from constitution `.specify/scripts/bash/parse-constitution.sh`
+- [x] T005 Write bats test for enhanced check-prerequisites.sh flags `tests/bash/test_check_prerequisites.bats`
+- [x] T006 Enhance check-prerequisites.sh with --require-commits and --include-commits flags `.specify/scripts/bash/check-prerequisites.sh`
+- [x] T007 [P] Add COMMITS and MILESTONES path helpers to common.sh `.specify/scripts/bash/common.sh`
 
 **Checkpoint**: Foundation ready - user story implementation can now begin
 
@@ -57,17 +57,17 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation (TDD RED phase)**
 
-- [ ] T008 [US1] Write bats test for task grouping by story tag `tests/bash/test_commits_grouping.bats`
-- [ ] T009 [US1] Write bats test for commit message generation `tests/bash/test_commits_grouping.bats`
+- [x] T008 [US1] Write bats test for task grouping by story tag `tests/bash/test_commits_grouping.bats`
+- [x] T009 [US1] Write bats test for commit message generation `tests/bash/test_commits_grouping.bats`
 
 ### Implementation for User Story 1
 
-- [ ] T010 [US1] Create speckit.commits.md slash command with outline structure `.claude/commands/speckit.commits.md`
-- [ ] T011 [US1] Implement task parsing logic in speckit.commits.md (read tasks.md, extract task IDs and story refs) `.claude/commands/speckit.commits.md`
-- [ ] T012 [US1] Implement semantic grouping algorithm (group by [Story] tag, then by file path) `.claude/commands/speckit.commits.md`
-- [ ] T013 [US1] Implement conventional commit message generation for each group `.claude/commands/speckit.commits.md`
-- [ ] T014 [US1] Implement commits.md output following contracts/commits-format.md specification `.claude/commands/speckit.commits.md`
-- [ ] T015 [US1] Add handoffs to speckit.milestones in command frontmatter `.claude/commands/speckit.commits.md`
+- [x] T010 [US1] Create speckit.commits.md slash command with outline structure `.claude/commands/speckit.commits.md`
+- [x] T011 [US1] Implement task parsing logic in speckit.commits.md (read tasks.md, extract task IDs and story refs) `.claude/commands/speckit.commits.md`
+- [x] T012 [US1] Implement semantic grouping algorithm (group by [Story] tag, then by file path) `.claude/commands/speckit.commits.md`
+- [x] T013 [US1] Implement conventional commit message generation for each group `.claude/commands/speckit.commits.md`
+- [x] T014 [US1] Implement commits.md output following contracts/commits-format.md specification `.claude/commands/speckit.commits.md`
+- [x] T015 [US1] Add handoffs to speckit.milestones in command frontmatter `.claude/commands/speckit.commits.md`
 
 **Checkpoint**: User Story 1 complete - `/speckit.commits` generates commits.md with grouped tasks
 
@@ -83,16 +83,16 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation (TDD RED phase)**
 
-- [ ] T016 [US2] Write bats test for TDD task injection `tests/bash/test_repetitive_tasks.bats`
-- [ ] T017 [US2] Write bats test for conditional linting task injection `tests/bash/test_repetitive_tasks.bats`
+- [x] T016 [US2] Write bats test for TDD task injection `tests/bash/test_repetitive_tasks.bats`
+- [x] T017 [US2] Write bats test for conditional linting task injection `tests/bash/test_repetitive_tasks.bats`
 
 ### Implementation for User Story 2
 
-- [ ] T018 [US2] Integrate parse-constitution.sh output into speckit.commits.md workflow `.claude/commands/speckit.commits.md`
-- [ ] T019 [US2] Implement TDD repetitive task injection (RED, GREEN, REFACTOR per commit) `.claude/commands/speckit.commits.md`
-- [ ] T020 [US2] Implement conditional linting task injection (shellcheck for .sh, ruff for .py) `.claude/commands/speckit.commits.md`
-- [ ] T021 [US2] Implement VERIFY task injection (make check) at end of each commit `.claude/commands/speckit.commits.md`
-- [ ] T022 [US2] Update commits.md output to include Repetitive Tasks section per commit `.claude/commands/speckit.commits.md`
+- [x] T018 [US2] Integrate parse-constitution.sh output into speckit.commits.md workflow `.claude/commands/speckit.commits.md`
+- [x] T019 [US2] Implement TDD repetitive task injection (RED, GREEN, REFACTOR per commit) `.claude/commands/speckit.commits.md`
+- [x] T020 [US2] Implement conditional linting task injection (shellcheck for .sh, ruff for .py) `.claude/commands/speckit.commits.md`
+- [x] T021 [US2] Implement VERIFY task injection (make check) at end of each commit `.claude/commands/speckit.commits.md`
+- [x] T022 [US2] Update commits.md output to include Repetitive Tasks section per commit `.claude/commands/speckit.commits.md`
 
 **Checkpoint**: User Story 2 complete - `/speckit.commits` adds constitution-driven repetitive tasks
 
@@ -108,17 +108,17 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation (TDD RED phase)**
 
-- [ ] T023 [US3] Write bats test for milestone boundary detection `tests/bash/test_milestones.bats`
-- [ ] T024 [US3] Write bats test for verification criteria extraction from spec `tests/bash/test_milestones.bats`
+- [x] T023 [US3] Write bats test for milestone boundary detection `tests/bash/test_milestones.bats`
+- [x] T024 [US3] Write bats test for verification criteria extraction from spec `tests/bash/test_milestones.bats`
 
 ### Implementation for User Story 3
 
-- [ ] T025 [US3] Create speckit.milestones.md slash command with outline structure `.claude/commands/speckit.milestones.md`
-- [ ] T026 [US3] Implement commits.md parsing to extract commit IDs and story refs `.claude/commands/speckit.milestones.md`
-- [ ] T027 [US3] Implement milestone boundary detection (group commits by user story) `.claude/commands/speckit.milestones.md`
-- [ ] T028 [US3] Implement verification criteria extraction from spec.md acceptance scenarios `.claude/commands/speckit.milestones.md`
-- [ ] T029 [US3] Implement milestones.md output following contracts/milestones-format.md specification `.claude/commands/speckit.milestones.md`
-- [ ] T030 [US3] Add handoffs to speckit.implement in command frontmatter `.claude/commands/speckit.milestones.md`
+- [x] T025 [US3] Create speckit.milestones.md slash command with outline structure `.claude/commands/speckit.milestones.md`
+- [x] T026 [US3] Implement commits.md parsing to extract commit IDs and story refs `.claude/commands/speckit.milestones.md`
+- [x] T027 [US3] Implement milestone boundary detection (group commits by user story) `.claude/commands/speckit.milestones.md`
+- [x] T028 [US3] Implement verification criteria extraction from spec.md acceptance scenarios `.claude/commands/speckit.milestones.md`
+- [x] T029 [US3] Implement milestones.md output following contracts/milestones-format.md specification `.claude/commands/speckit.milestones.md`
+- [x] T030 [US3] Add handoffs to speckit.implement in command frontmatter `.claude/commands/speckit.milestones.md`
 
 **Checkpoint**: User Story 3 complete - `/speckit.milestones` generates milestones.md with verification criteria
 
@@ -134,18 +134,18 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation (TDD RED phase)**
 
-- [ ] T031 [US4] Write bats test for document existence validation `tests/bash/test_implement_enhanced.bats`
-- [ ] T032 [US4] Write bats test for commit boundary detection `tests/bash/test_implement_enhanced.bats`
+- [x] T031 [US4] Write bats test for document existence validation `tests/bash/test_implement_enhanced.bats`
+- [x] T032 [US4] Write bats test for commit boundary detection `tests/bash/test_implement_enhanced.bats`
 
 ### Implementation for User Story 4
 
-- [ ] T033 [US4] Add document validation to speckit.implement.md (require commits.md, milestones.md) `.claude/commands/speckit.implement.md`
-- [ ] T034 [US4] Update check-prerequisites.sh call to use --require-commits --include-commits flags `.claude/commands/speckit.implement.md`
-- [ ] T035 [US4] Implement commit-by-commit execution flow (execute tasks grouped by commit) `.claude/commands/speckit.implement.md`
-- [ ] T036 [US4] Implement git commit creation at commit boundaries with planned message `.claude/commands/speckit.implement.md`
-- [ ] T037 [US4] Implement milestone pause logic (pause and prompt for verification when milestone reached) `.claude/commands/speckit.implement.md`
-- [ ] T038 [US4] Implement verification status tracking (update milestones.md status field) `.claude/commands/speckit.implement.md`
-- [ ] T039 [US4] Add clear error messages when commits.md or milestones.md missing `.claude/commands/speckit.implement.md`
+- [x] T033 [US4] Add document validation to speckit.implement.md (require commits.md, milestones.md) `.claude/commands/speckit.implement.md`
+- [x] T034 [US4] Update check-prerequisites.sh call to use --require-commits --include-commits flags `.claude/commands/speckit.implement.md`
+- [x] T035 [US4] Implement commit-by-commit execution flow (execute tasks grouped by commit) `.claude/commands/speckit.implement.md`
+- [x] T036 [US4] Implement git commit creation at commit boundaries with planned message `.claude/commands/speckit.implement.md`
+- [x] T037 [US4] Implement milestone pause logic (pause and prompt for verification when milestone reached) `.claude/commands/speckit.implement.md`
+- [x] T038 [US4] Implement verification status tracking (update milestones.md status field) `.claude/commands/speckit.implement.md`
+- [x] T039 [US4] Add clear error messages when commits.md or milestones.md missing `.claude/commands/speckit.implement.md`
 
 **Checkpoint**: User Story 4 complete - `/speckit.implement` respects commit and milestone boundaries
 
@@ -159,9 +159,9 @@
 
 ### Implementation for User Story 5
 
-- [ ] T040 [US5] Add progress display section to speckit.implement.md showing commit/milestone status `.claude/commands/speckit.implement.md`
-- [ ] T041 [US5] Implement ASCII progress visualization (commits completed, current milestone, remaining) `.claude/commands/speckit.implement.md`
-- [ ] T042 [US5] Display verification status for completed milestones (passed/failed/pending) `.claude/commands/speckit.implement.md`
+- [x] T040 [US5] Add progress display section to speckit.implement.md showing commit/milestone status `.claude/commands/speckit.implement.md`
+- [x] T041 [US5] Implement ASCII progress visualization (commits completed, current milestone, remaining) `.claude/commands/speckit.implement.md`
+- [x] T042 [US5] Display verification status for completed milestones (passed/failed/pending) `.claude/commands/speckit.implement.md`
 
 **Checkpoint**: User Story 5 complete - workflow progress is visible during implementation
 
@@ -171,11 +171,11 @@
 
 **Purpose**: Documentation and cleanup
 
-- [ ] T043 [P] Update README.md with new commands documentation `README.md`
-- [ ] T044 [P] Add command usage examples to each new slash command `.claude/commands/speckit.commits.md`, `.claude/commands/speckit.milestones.md`
-- [ ] T045 Run all bats tests to verify implementation `tests/bash/`
-- [ ] T046 Run make check to verify linting passes
-- [ ] T047 Run quickstart.md validation scenarios `specs/001-commit-based-tasks/quickstart.md`
+- [x] T043 [P] Update README.md with new commands documentation `README.md`
+- [x] T044 [P] Add command usage examples to each new slash command `.claude/commands/speckit.commits.md`, `.claude/commands/speckit.milestones.md`
+- [x] T045 Run all bats tests to verify implementation `tests/bash/`
+- [x] T046 Run make check to verify linting passes
+- [x] T047 Run quickstart.md validation scenarios `specs/001-commit-based-tasks/quickstart.md`
 
 ---
 

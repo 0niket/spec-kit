@@ -287,13 +287,15 @@ After running `specify init`, your AI coding agent will have access to these sla
 
 Essential commands for the Spec-Driven Development workflow:
 
-| Command                 | Description                                                              |
-| ----------------------- | ------------------------------------------------------------------------ |
-| `/speckit.constitution` | Create or update project governing principles and development guidelines |
-| `/speckit.specify`      | Define what you want to build (requirements and user stories)            |
-| `/speckit.plan`         | Create technical implementation plans with your chosen tech stack        |
-| `/speckit.tasks`        | Generate actionable task lists for implementation                        |
-| `/speckit.implement`    | Execute all tasks to build the feature according to the plan             |
+| Command                 | Description                                                                                   |
+| ----------------------- | --------------------------------------------------------------------------------------------- |
+| `/speckit.constitution` | Create or update project governing principles and development guidelines                      |
+| `/speckit.specify`      | Define what you want to build (requirements and user stories)                                 |
+| `/speckit.plan`         | Create technical implementation plans with your chosen tech stack                             |
+| `/speckit.tasks`        | Generate actionable task lists for implementation                                             |
+| `/speckit.commits`      | Group tasks into logical commits with constitution-driven repetitive tasks (TDD, linting)     |
+| `/speckit.milestones`   | Group commits into milestones with verification criteria for human review checkpoints         |
+| `/speckit.implement`    | Execute all tasks to build the feature, respecting commit and milestone boundaries            |
 
 #### Optional Commands
 
@@ -430,7 +432,7 @@ Go to the project folder and run your AI agent. In our example, we're using `cla
 
 ![Bootstrapping Claude Code environment](./media/bootstrap-claude-code.gif)
 
-You will know that things are configured correctly if you see the `/speckit.constitution`, `/speckit.specify`, `/speckit.plan`, `/speckit.tasks`, and `/speckit.implement` commands available.
+You will know that things are configured correctly if you see the `/speckit.constitution`, `/speckit.specify`, `/speckit.plan`, `/speckit.tasks`, `/speckit.commits`, `/speckit.milestones`, and `/speckit.implement` commands available.
 
 The first step should be establishing your project's governing principles using the `/speckit.constitution` command. This helps ensure consistent decision-making throughout all subsequent development phases:
 
