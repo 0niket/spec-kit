@@ -31,7 +31,7 @@
 >
 > **The Solution**: A complete **Diverge-Converge** workflow:
 >
-> ```
+> ```text
 > DIVERGENT (Breaking Down)              CONVERGENT (Building Up)
 > ┌─────────────────────────┐           ┌─────────────────────────┐
 > │  /speckit.specify       │           │  /speckit.commits       │
@@ -43,6 +43,7 @@
 > ```
 >
 > **Key Concepts**:
+>
 > - **Commits** accumulate tasks (each commit includes repetitive + non-repetitive tasks)
 > - **Repetitive tasks** — Derived from constitution (TDD, linting, Playwright tests)
 > - **Non-repetitive tasks** — The actual implementation work

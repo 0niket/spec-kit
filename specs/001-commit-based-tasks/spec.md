@@ -17,7 +17,7 @@ The current Spec Kit workflow has three planning layers: **Specification → Pla
 
 Introduce a **Diverge-Converge** workflow model:
 
-```
+```text
 DIVERGENT PHASES (Breaking Down)          CONVERGENT PHASES (Building Up)
 ┌─────────────────────────────────┐      ┌─────────────────────────────────┐
 │  Specification                  │      │  Tasks                          │
@@ -29,15 +29,18 @@ DIVERGENT PHASES (Breaking Down)          CONVERGENT PHASES (Building Up)
 ```
 
 **Divergent Phases** (existing, enhanced):
+
 1. `/speckit.specify` - Define what to build
 2. `/speckit.plan` - Break specification into technical approach
 3. `/speckit.tasks` - Break plan into actionable tasks
 
 **Convergent Phases** (new):
+
 1. `/speckit.commits` - Group tasks into commits with constitution-driven repetitive tasks
 2. `/speckit.milestones` - Group commits into milestones requiring manual verification
 
 **Key Concepts**:
+
 - **Commits** accumulate tasks (not the other way around)
 - Each commit has two types of tasks:
   - **Repetitive tasks**: Derived from constitution (TDD, linting, testing)
@@ -143,11 +146,13 @@ As a developer, I want to see a visual representation of my diverge-converge wor
 ### Functional Requirements
 
 **Divergent Phase (existing, enhanced)**:
+
 - **FR-001**: `/speckit.specify` MUST create a specification document
 - **FR-002**: `/speckit.plan` MUST break the specification into a technical plan
 - **FR-003**: `/speckit.tasks` MUST break the plan into actionable tasks
 
 **Convergent Phase (new)**:
+
 - **FR-004**: `/speckit.commits` MUST group tasks into logical commits
 - **FR-005**: `/speckit.commits` MUST parse the constitution and add repetitive tasks to each commit
 - **FR-006**: Each commit MUST have both repetitive tasks (from constitution) and non-repetitive tasks (from plan)
