@@ -9,11 +9,25 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com/github/spec-kit/actions/workflows/release.yml"><img src="https://github.com/github/spec-kit/actions/workflows/release.yml/badge.svg" alt="Release"/></a>
-    <a href="https://github.com/github/spec-kit/stargazers"><img src="https://img.shields.io/github/stars/github/spec-kit?style=social" alt="GitHub stars"/></a>
-    <a href="https://github.com/github/spec-kit/blob/main/LICENSE"><img src="https://img.shields.io/github/license/github/spec-kit" alt="License"/></a>
-    <a href="https://github.github.io/spec-kit/"><img src="https://img.shields.io/badge/docs-GitHub_Pages-blue" alt="Documentation"/></a>
+    <a href="https://github.com/0niket/spec-kit/actions/workflows/release.yml"><img src="https://github.com/0niket/spec-kit/actions/workflows/release.yml/badge.svg" alt="Release"/></a>
+    <a href="https://github.com/0niket/spec-kit/stargazers"><img src="https://img.shields.io/github/stars/0niket/spec-kit?style=social" alt="GitHub stars"/></a>
+    <a href="https://github.com/0niket/spec-kit/blob/main/LICENSE"><img src="https://img.shields.io/github/license/0niket/spec-kit" alt="License"/></a>
 </p>
+
+---
+
+> **🔀 Why This Fork?**
+>
+> This is a fork of the original [Spec Kit](https://github.com/github/spec-kit) with enhancements to bridge the gap between planning and execution.
+>
+> The original Spec Kit has three planning layers: **Specification → Planning → Tasks**. However, there's a missing link between planning and tasks. This fork introduces the concept of **Commits** as the bridge:
+>
+> - **Commits are planned ahead of time** — Tasks achieve commits, not the other way around
+> - **Two types of tasks**:
+>   - **Repetitive tasks** — Driven by your constitution (e.g., TDD's RED-GREEN-REFACTOR cycle for each commit, Playwright tests updated with UI changes)
+>   - **Non-repetitive tasks** — The actual work required to implement the specification
+>
+> This approach ensures that quality practices defined in your constitution are automatically woven into every commit, not bolted on as an afterthought.
 
 ---
 
