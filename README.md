@@ -66,7 +66,7 @@ Choose your preferred installation method:
 Install once and use everywhere:
 
 ```bash
-uv tool install specify-cli --from git+https://github.com/github/spec-kit.git
+uv tool install specify-cli --from git+https://github.com/0niket/spec-kit.git
 ```
 
 Then use the tool directly:
@@ -87,7 +87,7 @@ specify check
 To upgrade Specify, see the [Upgrade Guide](./docs/upgrade.md) for detailed instructions. Quick upgrade:
 
 ```bash
-uv tool install specify-cli --force --from git+https://github.com/github/spec-kit.git
+uv tool install specify-cli --force --from git+https://github.com/0niket/spec-kit.git
 ```
 
 #### Option 2: One-time Usage
@@ -95,7 +95,7 @@ uv tool install specify-cli --force --from git+https://github.com/github/spec-ki
 Run directly without installing:
 
 ```bash
-uvx --from git+https://github.com/github/spec-kit.git specify init <PROJECT_NAME>
+uvx --from git+https://github.com/0niket/spec-kit.git specify init <PROJECT_NAME>
 ```
 
 **Benefits of persistent installation:**
@@ -659,7 +659,7 @@ Contributing to Spec Kit? Here's how to set up your development environment and 
 
 ```bash
 # Clone the repository
-git clone https://github.com/github/spec-kit.git
+git clone https://github.com/0niket/spec-kit.git
 cd spec-kit
 
 # Install development dependencies
