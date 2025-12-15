@@ -161,13 +161,39 @@ Use **`/speckit.tasks`** to create an actionable task list from your implementat
 /speckit.tasks
 ```
 
-### 6. Execute implementation
+### 6. Group tasks into commits (Diverge-Converge)
 
-Use **`/speckit.implement`** to execute all tasks and build your feature according to the plan.
+Use **`/speckit.commits`** to organize tasks into logical commits with constitution-driven repetitive tasks (TDD-RED, TDD-GREEN, TDD-REFACTOR, LINT, VERIFY).
+
+```bash
+/speckit.commits
+```
+
+This step creates `commits.md` that groups tasks into commit boundaries, ensuring quality practices are woven into every commit.
+
+### 7. Create milestone checkpoints (Diverge-Converge)
+
+Use **`/speckit.milestones`** to group commits into verification checkpoints with acceptance criteria from your spec.
+
+```bash
+/speckit.milestones
+```
+
+This step creates `milestones.md` that defines human review checkpoints where you verify the implementation meets requirements.
+
+### 8. Execute implementation
+
+Use **`/speckit.implement`** to execute all tasks, respecting commit boundaries and pausing at milestone checkpoints for verification.
 
 ```bash
 /speckit.implement
 ```
+
+The implementation will:
+- Create git commits at each boundary defined in `commits.md`
+- Pause at milestones for human verification before proceeding
+- Track progress with visual indicators
+- Include all constitution-driven repetitive tasks (TDD, linting, verification)
 
 For detailed step-by-step instructions, see our [comprehensive guide](./spec-driven.md).
 
