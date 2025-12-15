@@ -161,7 +161,7 @@ Use **`/speckit.tasks`** to create an actionable task list from your implementat
 /speckit.tasks
 ```
 
-### 6. Group tasks into commits (Diverge-Converge)
+### 6. Group tasks into commits (Diverge-Converge) ⭐ Recommended
 
 Use **`/speckit.commits`** to organize tasks into logical commits with constitution-driven repetitive tasks (TDD-RED, TDD-GREEN, TDD-REFACTOR, LINT, VERIFY).
 
@@ -171,7 +171,7 @@ Use **`/speckit.commits`** to organize tasks into logical commits with constitut
 
 This step creates `commits.md` that groups tasks into commit boundaries, ensuring quality practices are woven into every commit.
 
-### 7. Create milestone checkpoints (Diverge-Converge)
+### 7. Create milestone checkpoints (Diverge-Converge) ⭐ Recommended
 
 Use **`/speckit.milestones`** to group commits into verification checkpoints with acceptance criteria from your spec.
 
@@ -189,11 +189,18 @@ Use **`/speckit.implement`** to execute all tasks, respecting commit boundaries 
 /speckit.implement
 ```
 
-The implementation will:
-- Create git commits at each boundary defined in `commits.md`
-- Pause at milestones for human verification before proceeding
-- Track progress with visual indicators
-- Include all constitution-driven repetitive tasks (TDD, linting, verification)
+**Ideal workflow**: Complete steps 1-7 (including `/speckit.commits` and `/speckit.milestones`) before running `/speckit.implement`. This enables:
+- Structured git commits at each boundary defined in `commits.md`
+- Milestone pauses for human verification before proceeding
+- Visual progress tracking across commits and milestones
+- Constitution-driven repetitive tasks (TDD, linting, verification) in every commit
+
+**Alternative workflow**: You can run `/speckit.implement` immediately after step 5 (`/speckit.tasks`) if needed. This provides:
+- Flat task execution without commit boundaries
+- No milestone verification checkpoints
+- Faster iteration for prototyping or exploration
+
+> **💡 Tip**: The ideal workflow (with commits and milestones) is strongly recommended for production features, as it ensures quality gates and makes implementation progress easier to track and review.
 
 For detailed step-by-step instructions, see our [comprehensive guide](./spec-driven.md).
 
