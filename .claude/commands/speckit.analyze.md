@@ -1,5 +1,5 @@
 ---
-description: Perform a non-destructive cross-artifact consistency and quality analysis across spec.md, plan.md, and tasks.md after task generation.
+description: Perform a non-destructive cross-artifact consistency and quality analysis across spec.md, plan.md, tasks.md, commits.md, and milestones.md after the diverge-converge workflow.
 ---
 
 ## User Input
@@ -12,7 +12,11 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Goal
 
-Identify inconsistencies, duplications, ambiguities, and underspecified items across the three core artifacts (`spec.md`, `plan.md`, `tasks.md`) before implementation. This command MUST run only after `/speckit.tasks` has successfully produced a complete `tasks.md`.
+Identify inconsistencies, duplications, ambiguities, and underspecified items across all planning artifacts (`spec.md`, `plan.md`, `tasks.md`, `commits.md`, `milestones.md`) before implementation.
+
+**Recommended usage**: Run after `/speckit.milestones` to validate the complete diverge-converge workflow.
+
+**Minimum requirement**: This command MUST run after `/speckit.tasks` has successfully produced a complete `tasks.md`. Optionally validates `commits.md` and `milestones.md` if they exist.
 
 ## Operating Constraints
 
@@ -24,11 +28,18 @@ Identify inconsistencies, duplications, ambiguities, and underspecified items ac
 
 ### 1. Initialize Analysis Context
 
-Run `.specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks` once from repo root and parse JSON for FEATURE_DIR and AVAILABLE_DOCS. Derive absolute paths:
+Run `.specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks --include-commits --include-milestones` once from repo root and parse JSON for FEATURE_DIR and AVAILABLE_DOCS. Derive absolute paths:
+
+**Required artifacts**:
 
 - SPEC = FEATURE_DIR/spec.md
 - PLAN = FEATURE_DIR/plan.md
 - TASKS = FEATURE_DIR/tasks.md
+
+**Optional artifacts** (validate if present):
+
+- COMMITS = FEATURE_DIR/commits.md (recommended for full analysis)
+- MILESTONES = FEATURE_DIR/milestones.md (recommended for full analysis)
 
 Abort with an error message if any required file is missing (instruct the user to run missing prerequisite command).
 For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
@@ -59,6 +70,20 @@ Load only the minimal necessary context from each artifact:
 - Phase grouping
 - Parallel markers [P]
 - Referenced file paths
+
+**From commits.md** (if present):
+
+- Commit boundaries
+- Task grouping into commits
+- Repetitive tasks (TDD, linting, verification)
+- Commit messages (conventional format)
+
+**From milestones.md** (if present):
+
+- Milestone boundaries
+- Commit grouping into milestones
+- Verification criteria from spec
+- Acceptance criteria alignment
 
 **From constitution:**
 
@@ -110,6 +135,22 @@ Focus on high-signal findings. Limit to 50 findings total; aggregate remainder i
 - Data entities referenced in plan but absent in spec (or vice versa)
 - Task ordering contradictions (e.g., integration tasks before foundational setup tasks without dependency note)
 - Conflicting requirements (e.g., one requires Next.js while other specifies Vue)
+
+#### G. Commit Structure Validation (if commits.md present)
+
+- All tasks from tasks.md appear in exactly one commit
+- Commits follow logical grouping (same story, same file, same phase)
+- Repetitive tasks match constitution requirements (TDD if constitution requires it, linting for appropriate file types)
+- Commit messages follow conventional format
+- Commit size reasonable (not too many tasks per commit)
+
+#### H. Milestone Alignment (if milestones.md present)
+
+- Milestones align with user stories from spec.md
+- Verification criteria match acceptance criteria from spec
+- All commits assigned to a milestone
+- Milestone boundaries create logical verification checkpoints
+- No milestone has too many commits (suggests insufficient verification points)
 
 ### 5. Severity Assignment
 

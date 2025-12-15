@@ -195,7 +195,24 @@ Use **`/speckit.milestones`** to group commits into verification checkpoints wit
 
 This step creates `milestones.md` that defines human review checkpoints where you verify the implementation meets requirements.
 
-### 8. Execute implementation
+### 8. Validate the plan (Optional but Recommended)
+
+Use **`/speckit.analyze`** to perform cross-artifact consistency and quality analysis across your complete plan.
+
+```bash
+/speckit.analyze
+```
+
+This step validates:
+
+- **Task coverage**: All spec requirements have corresponding tasks
+- **Commit structure**: Tasks are logically grouped into atomic commits
+- **Milestone alignment**: Milestones match user story acceptance criteria
+- **Consistency**: No conflicts or gaps between spec, tasks, commits, and milestones
+
+**Best run after**: `/speckit.milestones` (to validate the complete diverge-converge workflow)
+
+### 9. Execute implementation
 
 Use **`/speckit.implement`** to execute all tasks, respecting commit boundaries and pausing at milestone checkpoints for verification.
 
@@ -203,7 +220,7 @@ Use **`/speckit.implement`** to execute all tasks, respecting commit boundaries 
 /speckit.implement
 ```
 
-**Ideal workflow**: Complete steps 1-7 (including `/speckit.commits` and `/speckit.milestones`) before running `/speckit.implement`. This enables:
+**Ideal workflow**: Complete steps 1-8 (including `/speckit.commits`, `/speckit.milestones`, and `/speckit.analyze`) before running `/speckit.implement`. This enables:
 
 - Structured git commits at each boundary defined in `commits.md`
 - Milestone pauses for human verification before proceeding
@@ -344,17 +361,17 @@ Essential commands for the Spec-Driven Development workflow:
 | `/speckit.tasks`        | Generate actionable task lists for implementation                                                                                              |
 | `/speckit.commits`      | Group tasks into logical commits + add constitution-driven repetitive tasks (e.g., TDD cycles, linting, ticket updates - based on constitution) |
 | `/speckit.milestones`   | Group commits into milestones with verification criteria for human review checkpoints                                                          |
+| `/speckit.analyze`      | Cross-artifact consistency & coverage analysis (recommended after `/speckit.milestones` to validate complete diverge-converge workflow)        |
 | `/speckit.implement`    | Execute all tasks to build the feature, respecting commit and milestone boundaries                                                             |
 
 #### Optional Commands
 
 Additional commands for enhanced quality and validation:
 
-| Command              | Description                                                                                                                          |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `/speckit.clarify`   | Clarify underspecified areas (recommended before `/speckit.plan`; formerly `/quizme`)                                                |
-| `/speckit.analyze`   | Cross-artifact consistency & coverage analysis (run after `/speckit.tasks`, before `/speckit.implement`)                             |
-| `/speckit.checklist` | Generate custom quality checklists that validate requirements completeness, clarity, and consistency (like "unit tests for English") |
+| Command              | Description                                                                                          |
+| -------------------- | ---------------------------------------------------------------------------------------------------- |
+| `/speckit.clarify`   | Clarify underspecified areas (recommended before `/speckit.plan`; formerly `/quizme`)                |
+| `/speckit.checklist` | Generate custom quality checklists that validate requirements completeness, clarity, and consistency |
 
 ### Environment Variables
 
