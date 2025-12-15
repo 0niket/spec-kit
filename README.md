@@ -170,10 +170,12 @@ Use **`/speckit.commits`** to organize tasks into logical commits with **constit
 ```
 
 This step creates `commits.md` that groups tasks into commit boundaries. Each commit contains:
+
 - **Non-repetitive tasks**: The actual implementation work from `tasks.md`
 - **Repetitive tasks**: Quality gates extracted from your constitution (only what the constitution requires)
 
 **What repetitive tasks are added?** It depends entirely on your constitution:
+
 - **TDD workflow** (TDD-RED, TDD-GREEN, TDD-REFACTOR) - only if constitution mentions TDD or Red-Green-Refactor
 - **Linting** (LINT-BASH, LINT-PYTHON, etc.) - only for file types where constitution requires linting
 - **Verification** (VERIFY/make check) - only if constitution requires passing checks before commit
@@ -202,12 +204,14 @@ Use **`/speckit.implement`** to execute all tasks, respecting commit boundaries 
 ```
 
 **Ideal workflow**: Complete steps 1-7 (including `/speckit.commits` and `/speckit.milestones`) before running `/speckit.implement`. This enables:
+
 - Structured git commits at each boundary defined in `commits.md`
 - Milestone pauses for human verification before proceeding
 - Visual progress tracking across commits and milestones
 - Constitution-driven repetitive tasks (TDD, linting, verification) in every commit
 
 **Alternative workflow**: You can run `/speckit.implement` immediately after step 5 (`/speckit.tasks`) if needed. This provides:
+
 - Flat task execution without commit boundaries
 - No milestone verification checkpoints
 - Faster iteration for prototyping or exploration
