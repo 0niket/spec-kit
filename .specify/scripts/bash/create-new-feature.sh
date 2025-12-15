@@ -5,13 +5,14 @@ set -e
 JSON_MODE=false
 SHORT_NAME=""
 BRANCH_NUMBER=""
+TICKET_ID=""
 ARGS=()
 i=1
 while [ $i -le $# ]; do
     arg="${!i}"
     case "$arg" in
-        --json) 
-            JSON_MODE=true 
+        --json)
+            JSON_MODE=true
             ;;
         --short-name)
             if [ $((i + 1)) -gt $# ]; then
@@ -40,22 +41,37 @@ while [ $i -le $# ]; do
             fi
             BRANCH_NUMBER="$next_arg"
             ;;
-        --help|-h) 
-            echo "Usage: $0 [--json] [--short-name <name>] [--number N] <feature_description>"
+        --ticket-id)
+            if [ $((i + 1)) -gt $# ]; then
+                echo 'Error: --ticket-id requires a value' >&2
+                exit 1
+            fi
+            i=$((i + 1))
+            next_arg="${!i}"
+            if [[ "$next_arg" == --* ]]; then
+                echo 'Error: --ticket-id requires a value' >&2
+                exit 1
+            fi
+            TICKET_ID="$next_arg"
+            ;;
+        --help|-h)
+            echo "Usage: $0 [--json] [--short-name <name>] [--number N] [--ticket-id <id>] <feature_description>"
             echo ""
             echo "Options:"
             echo "  --json              Output in JSON format"
             echo "  --short-name <name> Provide a custom short name (2-4 words) for the branch"
             echo "  --number N          Specify branch number manually (overrides auto-detection)"
+            echo "  --ticket-id <id>    Provide ticket ID (e.g., PROJECT-123) - creates branch <ticket-id>-<short-name>"
             echo "  --help, -h          Show this help message"
             echo ""
             echo "Examples:"
             echo "  $0 'Add user authentication system' --short-name 'user-auth'"
             echo "  $0 'Implement OAuth2 integration for API' --number 5"
+            echo "  $0 'Fix payment timeout bug' --ticket-id 'PROJ-456' --short-name 'fix-payment-timeout'"
             exit 0
             ;;
-        *) 
-            ARGS+=("$arg") 
+        *)
+            ARGS+=("$arg")
             ;;
     esac
     i=$((i + 1))
@@ -63,7 +79,7 @@ done
 
 FEATURE_DESCRIPTION="${ARGS[*]}"
 if [ -z "$FEATURE_DESCRIPTION" ]; then
-    echo "Usage: $0 [--json] [--short-name <name>] [--number N] <feature_description>" >&2
+    echo "Usage: $0 [--json] [--short-name <name>] [--number N] [--ticket-id <id>] <feature_description>" >&2
     exit 1
 fi
 
@@ -238,21 +254,29 @@ else
     BRANCH_SUFFIX=$(generate_branch_name "$FEATURE_DESCRIPTION")
 fi
 
-# Determine branch number
-if [ -z "$BRANCH_NUMBER" ]; then
-    if [ "$HAS_GIT" = true ]; then
-        # Check existing branches on remotes
-        BRANCH_NUMBER=$(check_existing_branches "$SPECS_DIR")
-    else
-        # Fall back to local directory check
-        HIGHEST=$(get_highest_from_specs "$SPECS_DIR")
-        BRANCH_NUMBER=$((HIGHEST + 1))
+# Determine branch name format based on ticket ID presence
+if [ -n "$TICKET_ID" ]; then
+    # Sanitize ticket ID (keep alphanumeric and hyphens only)
+    SANITIZED_TICKET_ID=$(echo "$TICKET_ID" | sed 's/[^a-zA-Z0-9-]//g')
+    BRANCH_NAME="${SANITIZED_TICKET_ID}-${BRANCH_SUFFIX}"
+    FEATURE_NUM=""  # No feature number when using ticket ID
+else
+    # Determine branch number for sequential numbering
+    if [ -z "$BRANCH_NUMBER" ]; then
+        if [ "$HAS_GIT" = true ]; then
+            # Check existing branches on remotes
+            BRANCH_NUMBER=$(check_existing_branches "$SPECS_DIR")
+        else
+            # Fall back to local directory check
+            HIGHEST=$(get_highest_from_specs "$SPECS_DIR")
+            BRANCH_NUMBER=$((HIGHEST + 1))
+        fi
     fi
-fi
 
-# Force base-10 interpretation to prevent octal conversion (e.g., 010 → 8 in octal, but should be 10 in decimal)
-FEATURE_NUM=$(printf "%03d" "$((10#$BRANCH_NUMBER))")
-BRANCH_NAME="${FEATURE_NUM}-${BRANCH_SUFFIX}"
+    # Force base-10 interpretation to prevent octal conversion (e.g., 010 → 8 in octal, but should be 10 in decimal)
+    FEATURE_NUM=$(printf "%03d" "$((10#$BRANCH_NUMBER))")
+    BRANCH_NAME="${FEATURE_NUM}-${BRANCH_SUFFIX}"
+fi
 
 # GitHub enforces a 244-byte limit on branch names
 # Validate and truncate if necessary
@@ -292,10 +316,18 @@ if [ -f "$TEMPLATE" ]; then cp "$TEMPLATE" "$SPEC_FILE"; else touch "$SPEC_FILE"
 export SPECIFY_FEATURE="$BRANCH_NAME"
 
 if $JSON_MODE; then
-    printf '{"BRANCH_NAME":"%s","SPEC_FILE":"%s","FEATURE_NUM":"%s"}\n' "$BRANCH_NAME" "$SPEC_FILE" "$FEATURE_NUM"
+    if [ -n "$TICKET_ID" ]; then
+        printf '{"BRANCH_NAME":"%s","SPEC_FILE":"%s","TICKET_ID":"%s","FEATURE_DIR":"%s"}\n' "$BRANCH_NAME" "$SPEC_FILE" "$SANITIZED_TICKET_ID" "$FEATURE_DIR"
+    else
+        printf '{"BRANCH_NAME":"%s","SPEC_FILE":"%s","FEATURE_NUM":"%s","FEATURE_DIR":"%s"}\n' "$BRANCH_NAME" "$SPEC_FILE" "$FEATURE_NUM" "$FEATURE_DIR"
+    fi
 else
     echo "BRANCH_NAME: $BRANCH_NAME"
     echo "SPEC_FILE: $SPEC_FILE"
-    echo "FEATURE_NUM: $FEATURE_NUM"
+    if [ -n "$TICKET_ID" ]; then
+        echo "TICKET_ID: $SANITIZED_TICKET_ID"
+    else
+        echo "FEATURE_NUM: $FEATURE_NUM"
+    fi
     echo "SPECIFY_FEATURE environment variable set to: $BRANCH_NAME"
 fi
