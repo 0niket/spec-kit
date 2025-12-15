@@ -163,13 +163,25 @@ Use **`/speckit.tasks`** to create an actionable task list from your implementat
 
 ### 6. Group tasks into commits (Diverge-Converge) ⭐ Recommended
 
-Use **`/speckit.commits`** to organize tasks into logical commits with constitution-driven repetitive tasks (TDD-RED, TDD-GREEN, TDD-REFACTOR, LINT, VERIFY).
+Use **`/speckit.commits`** to organize tasks into logical commits with **constitution-driven repetitive tasks**.
 
 ```bash
 /speckit.commits
 ```
 
-This step creates `commits.md` that groups tasks into commit boundaries, ensuring quality practices are woven into every commit.
+This step creates `commits.md` that groups tasks into commit boundaries. Each commit contains:
+- **Non-repetitive tasks**: The actual implementation work from `tasks.md`
+- **Repetitive tasks**: Quality gates extracted from your constitution (only what the constitution requires)
+
+**What repetitive tasks are added?** It depends entirely on your constitution:
+- **TDD workflow** (TDD-RED, TDD-GREEN, TDD-REFACTOR) - only if constitution mentions TDD or Red-Green-Refactor
+- **Linting** (LINT-BASH, LINT-PYTHON, etc.) - only for file types where constitution requires linting
+- **Verification** (VERIFY/make check) - only if constitution requires passing checks before commit
+- **Ticket updates** (POST-TICKET-COMMENT) - only if constitution requires progress updates
+- **Code review** (REQUEST-REVIEW) - only if constitution mandates peer review checkpoints
+- **Any other practice your constitution defines** - the constitution is the source of truth
+
+**Important**: The command parses your constitution file to automatically detect which repetitive tasks to add. If your constitution doesn't mention a practice, it won't be added to commits.
 
 ### 7. Create milestone checkpoints (Diverge-Converge) ⭐ Recommended
 
@@ -320,15 +332,15 @@ After running `specify init`, your AI coding agent will have access to these sla
 
 Essential commands for the Spec-Driven Development workflow:
 
-| Command                 | Description                                                                                   |
-| ----------------------- | --------------------------------------------------------------------------------------------- |
-| `/speckit.constitution` | Create or update project governing principles and development guidelines                      |
-| `/speckit.specify`      | Define what you want to build (requirements and user stories)                                 |
-| `/speckit.plan`         | Create technical implementation plans with your chosen tech stack                             |
-| `/speckit.tasks`        | Generate actionable task lists for implementation                                             |
-| `/speckit.commits`      | Group tasks into logical commits with constitution-driven repetitive tasks (TDD, linting)     |
-| `/speckit.milestones`   | Group commits into milestones with verification criteria for human review checkpoints         |
-| `/speckit.implement`    | Execute all tasks to build the feature, respecting commit and milestone boundaries            |
+| Command                 | Description                                                                                                                                    |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/speckit.constitution` | Create or update project governing principles and development guidelines (source of truth for quality practices)                               |
+| `/speckit.specify`      | Define what you want to build (requirements and user stories)                                                                                  |
+| `/speckit.plan`         | Create technical implementation plans with your chosen tech stack                                                                              |
+| `/speckit.tasks`        | Generate actionable task lists for implementation                                                                                              |
+| `/speckit.commits`      | Group tasks into logical commits + add constitution-driven repetitive tasks (e.g., TDD cycles, linting, ticket updates - based on constitution) |
+| `/speckit.milestones`   | Group commits into milestones with verification criteria for human review checkpoints                                                          |
+| `/speckit.implement`    | Execute all tasks to build the feature, respecting commit and milestone boundaries                                                             |
 
 #### Optional Commands
 

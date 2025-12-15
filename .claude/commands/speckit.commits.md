@@ -56,10 +56,26 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Scope: derived from primary file path or component
    - Description: summarizes what the commit achieves
 
-7. **Add repetitive tasks** to each commit based on constitution:
-   - If TDD enabled: Add TDD-RED, TDD-GREEN, TDD-REFACTOR tasks
-   - If linting enabled: Add appropriate LINT tasks based on file types in commit
-   - Always add VERIFY task (make check) at end
+7. **Add repetitive tasks** to each commit based on constitution requirements:
+
+   **CRITICAL**: The constitution is the source of truth. Use `parse-constitution.sh` output to determine which repetitive tasks to add.
+
+   **Common repetitive task types** (only if constitution requires them):
+   - **TDD workflow**: TDD-RED, TDD-GREEN, TDD-REFACTOR (only if constitution mentions TDD/Red-Green-Refactor)
+   - **Linting**: LINT-BASH, LINT-PYTHON, LINT-MARKDOWN (only for file types in commit where constitution requires linting)
+   - **Verification**: VERIFY task (make check or similar, if constitution requires passing checks before commit)
+   - **Ticket updates**: POST-TICKET-COMMENT (if constitution requires periodic ticket updates)
+   - **Code review**: REQUEST-REVIEW (if constitution mandates peer review checkpoints)
+   - **Documentation**: UPDATE-DOCS (if constitution requires doc updates per commit)
+   - **Security scans**: RUN-SECURITY-SCAN (if constitution mandates security checks)
+   - **Performance tests**: RUN-PERF-TESTS (if constitution requires performance validation)
+
+   **Important rules**:
+   - ONLY add repetitive tasks that are explicitly or implicitly required by the constitution
+   - DO NOT assume standard practices - read what the constitution actually says
+   - Some tasks repeat multiple times per commit (e.g., TDD cycle for each component)
+   - Some tasks happen once per commit (e.g., final VERIFY before commit)
+   - Repetitive tasks ensure quality gates defined in constitution are enforced at every commit
 
 8. **Generate commits.md** following the format in `contracts/commits-format.md`:
    - Header with metadata (Generated timestamp, Source paths)
@@ -122,9 +138,13 @@ Output: Single commit (related test + implementation)
 
 ## Repetitive Task Injection
 
-For each commit, add repetitive tasks based on constitution requirements:
+**CONSTITUTION DRIVES EVERYTHING**: First run `parse-constitution.sh` to get JSON output of required repetitive tasks. Only add what the constitution specifies.
 
-**If constitution has TDD requirements**:
+### Example 1: Constitution with TDD + Linting Requirements
+
+**Constitution says**: "All code changes MUST follow Red-Green-Refactor TDD cycle. All bash scripts MUST pass shellcheck before commit."
+
+**Resulting repetitive tasks for a commit with bash files**:
 
 ```markdown
 ### Repetitive Tasks
@@ -132,20 +152,49 @@ For each commit, add repetitive tasks based on constitution requirements:
 - [ ] [TDD-RED] Write failing test for [primary component in commit]
 - [ ] [TDD-GREEN] Implement [primary component] to pass test
 - [ ] [TDD-REFACTOR] Refactor [primary component] while tests pass
+- [ ] [LINT-BASH] Run shellcheck on modified bash scripts
 - [ ] [VERIFY] Run make check
 ```
 
-**If commit contains .sh files and shellcheck required**:
+### Example 2: Constitution with Ticket Update Requirements
+
+**Constitution says**: "Developers MUST post progress comment on tracking ticket after completing each commit. All commits MUST pass make check before committing."
+
+**Resulting repetitive tasks**:
 
 ```markdown
-- [ ] [LINT-BASH] Run shellcheck on modified bash scripts
+### Repetitive Tasks
+
+- [ ] [POST-TICKET-COMMENT] Post progress update to ticket PROJECT-123
+- [ ] [VERIFY] Run make check
 ```
 
-**If commit contains .py files and ruff required**:
+### Example 3: Constitution with NO TDD Requirement
+
+**Constitution says**: "Code MUST pass linting checks. No testing requirements specified."
+
+**Resulting repetitive tasks for commit with Python files** (NO TDD tasks):
 
 ```markdown
+### Repetitive Tasks
+
 - [ ] [LINT-PYTHON] Run ruff check on modified Python files
+- [ ] [VERIFY] Run make check
 ```
+
+### Example 4: Minimal Constitution
+
+**Constitution says**: "Ship fast, iterate quickly. No formal process required."
+
+**Resulting repetitive tasks** (NONE - constitution doesn't require any):
+
+```markdown
+### Repetitive Tasks
+
+(No repetitive tasks - constitution does not mandate any quality gates)
+```
+
+**Key principle**: If the constitution doesn't mention a practice, don't add tasks for it. The constitution is law.
 
 ## Output Format
 
