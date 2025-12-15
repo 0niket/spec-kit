@@ -7,6 +7,39 @@ All notable changes to the Specify CLI and templates are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.23] - 2025-12-15
+
+### Added
+
+- **Ticket ID Workflow (User Story 1)**: `/speckit.specify` now supports ticket-based branch naming
+  - Interactive prompt for ticket ID (ClickUp, Jira, etc.) with skip option
+  - Branch format: `{ticket-id}-{short-name}` (e.g., `PROJECT-123-user-auth`)
+  - Fallback to sequential numbering: `{###}-{short-name}` (e.g., `005-user-auth`)
+  - Ticket ID validation: alphanumeric + hyphens, max 50 characters
+  - Automatic sanitization of invalid characters
+- **Interactive Prompt Functions**: New bash utility scripts for user input
+  - `interactive-prompts.sh`: Handles ticket ID and short name prompting with validation
+  - `short-name-generator.sh`: NLP-lite algorithm for generating concise feature names
+  - Cancellation support: "cancel", "quit", "exit", "abort" keywords
+  - Skip keywords: "skip", "none", "n" for bypassing ticket ID prompt
+- **Smart Short Name Generation**: Automated extraction of 2-4 key terms from descriptions
+  - Prioritizes technical terms (OAuth2, API, JWT)
+  - Prioritizes action verbs (add, fix, create, implement)
+  - Filters common stop words
+  - User can accept suggestion or provide custom name
+- **Comprehensive Test Suite**: 46 tests for bash functions (all passing)
+  - 13 interactive prompt tests
+  - 16 short name generator tests
+  - 17 integration workflow tests
+  - PowerShell Pester tests prepared for Windows compatibility
+
+### Changed
+
+- Enhanced `create-new-feature.sh` with `--ticket-id` parameter support
+- Updated `/speckit.specify` command template with ticket ID workflow instructions
+- JSON output now includes `TICKET_ID` field when ticket ID provided
+- JSON output includes `FEATURE_DIR` field for easier access to spec directory
+
 ## [0.0.22] - 2025-11-07
 
 - Support for VS Code/Copilot agents, and moving away from prompts to proper agents with hand-offs.
